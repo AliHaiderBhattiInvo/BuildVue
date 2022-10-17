@@ -13,10 +13,11 @@
           <v-col
             v-for="(project, index) in projectsData"
             :key="index"
-            cols="12"
-            md="4"
+            class="d-flex flex-wrap"
+          
+            @click="openProject()"
           >
-            <v-card class="" max-width="344">
+            <v-card max-width="344">
               <v-img
                 src="https://cdn.vuetifyjs.com/images/cards/sunshine.jpg"
                 height="200px"
@@ -134,5 +135,10 @@ export default {
       ],
     }
   },
+  methods: {
+    openProject() {
+      this.$router.push({path: "/phase"})
+    }
+  }
 }
 </script>

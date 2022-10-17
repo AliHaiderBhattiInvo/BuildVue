@@ -26,10 +26,10 @@
 
             <v-form @submit.prevent="agregarTodo">
               <v-text-field
+                v-model.trim="texto"
                 type="text"
                 placeholder="Create a new todo..."
                 class="form-control my-3"
-                v-model.trim="texto"
               />
             </v-form>
             <v-card-actions>
@@ -64,6 +64,7 @@ export default {
   data() {
     return {
       show: false,
+      texto: '',
       arrayTasks: [
         {
           id: 1,
