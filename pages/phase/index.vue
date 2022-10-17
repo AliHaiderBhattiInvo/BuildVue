@@ -13,8 +13,8 @@
           <v-col
             v-for="(project, index) in projectsData"
             :key="index"
-            cols="12"
-            md="4"
+            class="d-flex flex-wrap"
+            @click="openPhase(index)"
           >
             <v-card class="" max-width="344">
               <v-img
@@ -131,5 +131,10 @@ export default {
       ],
     }
   },
+  methods: {
+    openPhase(index) {
+      this.$router.push({path: `/phase/${index}`})
+    }
+  }
 }
 </script>

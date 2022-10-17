@@ -1,5 +1,5 @@
 <template>
-  <v-row justify="center" align="center">
+  <div><v-row justify="center" align="center">
     <NuxtLogo />
     <v-col cols="12" sm="8" md="6">
       <div class="logo py-4 d-flex justify-center">
@@ -34,7 +34,7 @@
             Forgot password?
           </v-btn>
           <v-spacer></v-spacer>
-          <v-btn color="primary">
+          <v-btn color="primary" @click="login()">
             <v-icon left>mdi-lock</v-icon>
             Login
           </v-btn>
@@ -42,11 +42,23 @@
       </v-card>
     </v-col>
   </v-row>
+  </div>
 </template>
 
 <script>
 export default {
   name: 'IndexPage',
+  data() {
+    return {
+      username: '',
+      password: '',
+    }
+  },
+  methods: {
+    login() {
+      this.$router.push({ path: "/projects" })
+    }
+  }
 }
 </script>
 <style>
