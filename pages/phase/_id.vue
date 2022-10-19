@@ -48,7 +48,7 @@
         <div v-for="(item, i) in arrayTasks" :key="i">
           <div class="d-flex" style="width: 350px; cursor: pointer">
             <v-text-field
-            readonly
+              readonly
               :value="item.title"
               type="text"
               placeholder="Create a new todo..."
@@ -56,27 +56,29 @@
               @click="openTaskList()"
             />
             <v-progress-circular
-            class="mt-2 ml-1"
+              class="mt-2 ml-1"
               :rotate="360"
               :size="35"
               :value="item.status"
               :color="checkStatus(item.status)"
             >
-              {{ item.status }}
+              <div class="font-10">
+                {{ item.status + '%' }}
+              </div>
             </v-progress-circular>
           </div>
         </div>
       </v-container>
     </div>
-    <TaskList v-if="openTaskDialog" :openTaskDialog.sync="openTaskDialog"/>
+    <TaskList v-if="openTaskDialog" :openTaskDialog.sync="openTaskDialog" />
   </div>
 </template>
 
 <script>
 export default {
   name: 'PhaseDetail',
-   components: {
-    TaskList: () => import("../../components/TaskList/TaskList.vue")
+  components: {
+    TaskList: () => import('../../components/TaskList/TaskList.vue'),
   },
   data() {
     return {
@@ -107,13 +109,15 @@ export default {
   },
   methods: {
     addTask() {
-      this.arrayTasks.push({
-        id: 1,
-        index: 'Task1',
-        title: this.texto,
-        status: 0,
-      })
-      this.texto = ''
+      if (this.texto.length) {
+        this.arrayTasks.push({
+          id: 1,
+          index: 'Task1',
+          title: this.texto,
+          status: 0,
+        })
+        this.texto = ''
+      }
     },
     checkStatus(value) {
       if (value >= 50) return 'green'
@@ -122,7 +126,12 @@ export default {
     },
     openTaskList() {
       this.openTaskDialog = true
-    }
+    },
   },
 }
 </script>
+<style scoped>
+.font-10 {
+  font-size: 10px;
+}
+</style>
