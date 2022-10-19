@@ -2,6 +2,31 @@ import colors from 'vuetify/es5/util/colors'
 
 export default {
   // Global page headers: https://go.nuxtjs.dev/config-head
+  router: {
+    extendRoutes(routes, resolve) {
+      routes.push(
+        {
+          name: 'ProjectsList',
+          path: '/projects',
+          component: resolve(__dirname, 'pages/projects/index.vue')
+        },
+        {
+          name: 'ProjectDetails',
+          path: '/projects/:projectId',
+          redirect: {name: 'PhasesList'}
+        },
+        {
+          name: 'PhasesList',
+          path: '/projects/:projectId/phases',
+          component: resolve(__dirname, 'pages/phase/index.vue'),
+        },
+        {
+          path: '/projects/:projectId/phases/:phaseId',
+          component: resolve(__dirname, 'pages/phase/_id.vue'),
+        }
+        )
+    }
+  },
   head: {
     titleTemplate: '%s - BuildVue',
     title: 'BuildVue',
