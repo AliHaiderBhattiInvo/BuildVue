@@ -14,7 +14,7 @@
             v-for="(project, index) in projectsData"
             :key="index"
             class="d-flex flex-wrap"
-            @click="openPhase(index)"
+            @click="openPhase(index, project)"
           >
             <v-card class="" max-width="344">
               <v-img
@@ -61,11 +61,12 @@ export default {
     data() {
     return {
       show: false,
+      flag: false,
       projectsData: [
         {
           id: 1,
           img: 'https://cdn.vuetifyjs.com/images/cards/sunshine.jpg',
-          title: 'Top western road trips ',
+          title: 'Top western road trips 1',
           subtitle: '1,000 miles of wonder ',
           description: `I'm a thing. But, like most politicians, he promised more than he
           could deliver. You won't have time for sleeping, soldier, not with all
@@ -76,7 +77,7 @@ export default {
         {
           id: 2,
           img: 'https://cdn.vuetifyjs.com/images/cards/sunshine.jpg',
-          title: 'Top western road trips ',
+          title: 'Top western road trips 2',
           subtitle: '1,000 miles of wonder ',
           description: `I'm a thing. But, like most politicians, he promised more than he
           could deliver. You won't have time for sleeping, soldier, not with all
@@ -87,7 +88,7 @@ export default {
         {
           id: 3,
           img: 'https://cdn.vuetifyjs.com/images/cards/sunshine.jpg',
-          title: 'Top western road trips ',
+          title: 'Top western road trips 3',
           subtitle: '1,000 miles of wonder ',
           description: `I'm a thing. But, like most politicians, he promised more than he
           could deliver. You won't have time for sleeping, soldier, not with all
@@ -98,7 +99,7 @@ export default {
         {
           id: 4,
           img: 'https://cdn.vuetifyjs.com/images/cards/sunshine.jpg',
-          title: 'Top western road trips ',
+          title: 'Top western road trips 4',
           subtitle: '1,000 miles of wonder ',
           description: `I'm a thing. But, like most politicians, he promised more than he
           could deliver. You won't have time for sleeping, soldier, not with all
@@ -109,7 +110,7 @@ export default {
         {
           id: 5,
           img: 'https://cdn.vuetifyjs.com/images/cards/sunshine.jpg',
-          title: 'Top western road trips ',
+          title: 'Top western road trips 5',
           subtitle: '1,000 miles of wonder ',
           description: `I'm a thing. But, like most politicians, he promised more than he
           could deliver. You won't have time for sleeping, soldier, not with all
@@ -120,7 +121,7 @@ export default {
         {
           id: 6,
           img: 'https://cdn.vuetifyjs.com/images/cards/sunshine.jpg',
-          title: 'Top western road trips ',
+          title: 'Top western road trips 6',
           subtitle: '1,000 miles of wonder ',
           description: `I'm a thing. But, like most politicians, he promised more than he
           could deliver. You won't have time for sleeping, soldier, not with all
@@ -132,8 +133,8 @@ export default {
     }
   },
   methods: {
-    openPhase(index) {
-      this.$router.push({path: `/phase/${index}`})
+    openPhase(index, project) {
+      this.$router.push({path: `${this.$route.path + '/'+index}`, params: {id: 'test title' }})
     }
   }
 }

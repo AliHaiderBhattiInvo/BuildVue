@@ -15,7 +15,7 @@
             :key="index"
             class="d-flex flex-wrap"
           
-            @click="openProject()"
+            @click="openProject(index)"
           >
             <v-card max-width="344">
               <v-img
@@ -56,7 +56,6 @@
     </v-item-group>
   </div>
 </template>
-
 <script>
 // import ListProjects from '../../components/projects/ListProjects.vue'
 export default {
@@ -136,8 +135,8 @@ export default {
     }
   },
   methods: {
-    openProject() {
-      this.$router.push({path: "/phase"})
+    openProject(index) {
+      this.$router.push({path: `/projects/${index}/phases`})
     }
   }
 }
