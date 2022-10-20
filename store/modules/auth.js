@@ -11,7 +11,7 @@ const actions = {
   login(content, data) {
     return new Promise((resolve, reject) => {
       authAxios.post('oauth/token', null, data).then((response) => {
-        console.log("reesponsee get", response)
+        console.log("reesponse get", response)
         resolve(response);
       })
       .catch((err) => {
