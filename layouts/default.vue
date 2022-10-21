@@ -21,13 +21,20 @@
 </template>
 
 <script>
+import { mapGetters } from "vuex";
 export default {
   name: 'DefaultLayout',
+  computed: {
+    ...mapGetters(["getLogin", "getDashboard"]),
+  },
   data() {
     return {
       fixed: false,
       routeCheck: false,
     }
+  },
+  mounted() {
+    console.log("getter", this.getLogin, this.getDashboard)
   },
   watch: {
     $route(to) {
