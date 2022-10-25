@@ -12,12 +12,12 @@ export default {
         {
           name: 'Login',
           path: '/login',
-          component: resolve(__dirname, 'pages/Login/login.vue'),
+          component: resolve(__dirname, 'pages/Login/Login.vue'),
         },
         {
           name: 'ProjectsList',
           path: '/projects',
-          component: resolve(__dirname, 'pages/projects/index.vue'),
+          component: resolve(__dirname, 'pages/Projects/ProjectsList.vue'),
         },
         {
           name: 'ProjectDetails',
@@ -27,11 +27,12 @@ export default {
         {
           name: 'PhasesList',
           path: '/projects/:projectId/phases',
-          component: resolve(__dirname, 'pages/phase/index.vue'),
+          component: resolve(__dirname, 'pages/Phases/PhasesList.vue'),
         },
         {
+          name: 'PhaseDetails',
           path: '/projects/:projectId/phases/:phaseId',
-          component: resolve(__dirname, 'pages/phase/_id.vue'),
+          component: resolve(__dirname, 'pages/Phases/PhaseDetails.vue'),
         }
       )
     },
@@ -123,7 +124,7 @@ export default {
             method: 'delete',
           },
           user: {
-            url: 'api/v1/users',
+            url: 'users',
             method: 'get',
             propertyName: 'data',
           },

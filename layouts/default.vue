@@ -45,11 +45,10 @@ export default {
     //   }
     // },
     logout() {
-      this.$auth.logout()
-      // .then(() => {
-      // this.$store.commit('setToken', null)
-      // this.$router.push({ path: '/login' })
-      // })
+      this.$auth.logout().then(() => {
+        this.$store.commit('setToken', null)
+        this.$router.push({ path: '/login' })
+      })
     },
   },
 }

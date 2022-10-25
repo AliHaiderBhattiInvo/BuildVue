@@ -59,6 +59,7 @@
 // import ListProjects from '../../components/projects/ListProjects.vue'
 export default {
   name: 'ProjectsPage',
+  middleware: 'auth',
   // components: { ListProjects },
   data() {
     return {
