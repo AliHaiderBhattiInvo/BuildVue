@@ -38,6 +38,11 @@
             <v-btn color="primary" @click="login()">
               <v-icon left>mdi-lock</v-icon>
               Login
+              <v-progress-circular
+                v-if="loader"
+                indeterminate
+                class="ml-2"
+              ></v-progress-circular>
             </v-btn>
           </v-card-actions>
         </v-card>
@@ -47,13 +52,14 @@
 </template>
 
 <script>
-// import { mapActions, mapGetters } from 'vuex'
 export default {
-  name: 'IndexPage',
+  name: 'LoginPage',
+  middleware: 'auth',
   data() {
     return {
       username: '',
       password: '',
+      loader: false,
     }
   },
   methods: {
@@ -65,8 +71,14 @@ export default {
         password: this.password,
         grant_type: this.password,
       }
-      this.$store.dispatch('login', loginCreds)
-      this.$router.push({ path: '/projects' })
+      this.loader = true
+      this.$auth
+        .loginWith('local', {
+          data: loginCreds,
+        })
+        .then(() => {
+          this.loader = false
+        })
     },
   },
 }

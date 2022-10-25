@@ -14,7 +14,6 @@
             v-for="(project, index) in projectsData"
             :key="index"
             class="d-flex flex-wrap"
-          
             @click="openProject(index)"
           >
             <v-card max-width="344">
@@ -136,8 +135,8 @@ export default {
   },
   methods: {
     openProject(index) {
-      this.$router.push({path: `/projects/${index}/phases`})
-    }
-  }
+      this.$router.push({ path: `/projects/${index}/phases` })
+    },
+  },
 }
 </script>

@@ -2,10 +2,10 @@
   <v-app dark>
     <div>
       <v-btn
-        v-if="routeCheck"
+        v-show="loggedIn"
         class="float-right btn-width ma-4"
         color="primary"
-        @click="$router.push({ path: '/' })"
+        @click="logout()"
         >Logout</v-btn
       >
     </div>
@@ -21,25 +21,35 @@
 </template>
 
 <script>
-import { mapGetters } from "vuex";
+import { mapGetters } from 'vuex'
 export default {
   name: 'DefaultLayout',
-  computed: {
-    ...mapGetters(["getLogin", "getDashboard"]),
-  },
   data() {
     return {
       fixed: false,
-      routeCheck: false,
     }
   },
-  mounted() {
-    console.log("getter", this.getLogin, this.getDashboard)
+  computed: {
+    ...mapGetters(['getLogin', 'getDashboard']),
+    loggedIn() {
+      return !!this.$auth.loggedIn || this.$route.path !== '/login'
+    },
   },
-  watch: {
-    $route(to) {
-      if (to.path !== '/') this.routeCheck = true
-      else this.routeCheck = false
+  methods: {
+    // ...mapMutations(['setToken']),
+    // setUser() {
+    //   if (!process.client) return
+    //   const token = localStorage.getItem('auth._token.local')
+    //   if (token) {
+    //     this.setToken(token)
+    //   }
+    // },
+    logout() {
+      this.$auth.logout()
+      // .then(() => {
+      // this.$store.commit('setToken', null)
+      // this.$router.push({ path: '/login' })
+      // })
     },
   },
 }
