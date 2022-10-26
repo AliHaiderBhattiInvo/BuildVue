@@ -9,8 +9,8 @@
         >Logout</v-btn
       >
     </div>
-    <v-main>
-      <v-container>
+    <v-main class="d-flex justify-center alignn-center">
+      <v-container class="d-flex justify-center alignn-center">
         <Nuxt />
       </v-container>
     </v-main>
@@ -30,20 +30,12 @@ export default {
     }
   },
   computed: {
-    ...mapGetters(['getLogin', 'getDashboard']),
+    ...mapGetters(['getLogin']),
     loggedIn() {
       return !!this.$auth.loggedIn || this.$route.path !== '/login'
     },
   },
   methods: {
-    // ...mapMutations(['setToken']),
-    // setUser() {
-    //   if (!process.client) return
-    //   const token = localStorage.getItem('auth._token.local')
-    //   if (token) {
-    //     this.setToken(token)
-    //   }
-    // },
     logout() {
       this.$auth.logout().then(() => {
         this.$store.commit('setToken', null)

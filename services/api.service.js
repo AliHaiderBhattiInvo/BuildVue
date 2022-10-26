@@ -1,19 +1,19 @@
-const axios = require("axios").default;
+const axios = require('axios').default
 
-const baseUrl = "https://stoplight.io/mocks/buildvue/api/1170503/";
+const baseUrl = process.env.BASE_URL
 
 const ApiService = {
   post: (endpoint, token, body) => {
     if (!token) {
-      return axios.post(`${baseUrl}${endpoint}`, body);
+      return axios.post(`${baseUrl}${endpoint}`, body)
     }
     const customAxios = axios.create({
       headers: {
         Authorization: `Bearer ${token}`,
       },
-    });
-    return customAxios.post(`${baseUrl}${endpoint}`, body);
+    })
+    return customAxios.post(`${baseUrl}${endpoint}`, body)
   },
-};
+}
 
-export default ApiService;
+export default ApiService

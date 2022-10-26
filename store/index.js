@@ -8,7 +8,6 @@ const state = {
   login: 'ali haider',
 }
 const getters = {
-  // getLogin: (state) =>  state.login,
   getLogin(state) {
     return state.login
   },
@@ -22,29 +21,6 @@ export default {
   getters,
   actions,
   modules: {
-    auth
+    auth,
   },
 }
-
-// const store = {
-//     state: {
-//         login: 'ali haider'
-//     },
-//     getters: {
-//         getLogin: (state) => state.login
-//     },
-//     mutations: {},
-//     actioons: {}
-
-// }
-
-// const mutationNames = [];
-// for (const mutation in store.mutations) {
-//   mutationNames.push(mutation);
-// }
-
-// store.plugins = [
-
-// ];
-
-// export default new Vuex.Store(store);
