@@ -77,6 +77,7 @@
 <script>
 export default {
   name: 'PhaseDetail',
+  middleware: 'auth',
   components: {
     TaskList: () => import('../../components/TaskList/TaskList.vue'),
   },

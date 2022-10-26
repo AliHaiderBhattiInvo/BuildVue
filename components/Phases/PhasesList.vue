@@ -57,8 +57,9 @@
 
 <script>
 export default {
-  name: 'InspirePage',
-    data() {
+  name: 'PhasesList',
+  middleware: 'auth',
+  data() {
     return {
       show: false,
       flag: false,
@@ -134,8 +135,11 @@ export default {
   },
   methods: {
     openPhase(index, project) {
-      this.$router.push({path: `${this.$route.path + '/'+index}`, params: {id: 'test title' }})
-    }
-  }
+      this.$router.push({
+        path: `${this.$route.path + '/' + index}`,
+        params: { id: 'test title' },
+      })
+    },
+  },
 }
 </script>

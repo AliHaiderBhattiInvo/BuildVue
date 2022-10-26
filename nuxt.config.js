@@ -6,26 +6,36 @@ export default {
     extendRoutes(routes, resolve) {
       routes.push(
         {
+          path: '',
+          redirect: { name: 'ProjectsList' },
+        },
+        {
+          name: 'Login',
+          path: '/login',
+          component: resolve(__dirname, 'pages/Login/Login.vue'),
+        },
+        {
           name: 'ProjectsList',
           path: '/projects',
-          component: resolve(__dirname, 'pages/projects/index.vue')
+          component: resolve(__dirname, 'pages/Projects/ProjectsList.vue'),
         },
         {
           name: 'ProjectDetails',
           path: '/projects/:projectId',
-          redirect: {name: 'PhasesList'}
+          redirect: { name: 'PhasesList' },
         },
         {
           name: 'PhasesList',
           path: '/projects/:projectId/phases',
-          component: resolve(__dirname, 'pages/phase/index.vue'),
+          component: resolve(__dirname, 'pages/Phases/PhasesList.vue'),
         },
         {
+          name: 'PhaseDetails',
           path: '/projects/:projectId/phases/:phaseId',
-          component: resolve(__dirname, 'pages/phase/_id.vue'),
+          component: resolve(__dirname, 'pages/Phases/PhaseDetails.vue'),
         }
-        )
-    }
+      )
+    },
   },
   head: {
     titleTemplate: '%s - BuildVue',
@@ -63,12 +73,13 @@ export default {
   modules: [
     // https://go.nuxtjs.dev/axios
     '@nuxtjs/axios',
+    '@nuxtjs/auth',
   ],
 
   // Axios module configuration: https://go.nuxtjs.dev/config-axios
   axios: {
     // Workaround to avoid enforcing hard-coded localhost:3000: https://github.com/nuxt-community/axios-module/issues/308
-    baseURL: '/',
+    baseURL: process.env.BASE_URL,
   },
 
   // Vuetify module configuration: https://go.nuxtjs.dev/config-vuetify
@@ -92,4 +103,34 @@ export default {
 
   // Build Configuration: https://go.nuxtjs.dev/config-build
   build: {},
+  auth: {
+    watchLoggedIn: true,
+    redirect: {
+      login: '/login',
+      logout: '/login',
+      callback: '/login',
+      home: '/projects',
+    },
+    strategies: {
+      local: {
+        endpoints: {
+          login: {
+            url: 'oauth/token',
+            method: 'post',
+            propertyName: 'access_token',
+          },
+          logout: {
+            url: '',
+            method: 'delete',
+          },
+          user: {
+            url: 'users',
+            method: 'get',
+            propertyName: 'data',
+          },
+        },
+        tokenType: 'Bearer',
+      },
+    },
+  },
 }

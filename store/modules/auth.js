@@ -1,22 +1,37 @@
-import authAxios from '@/services/api.service.js'
+// import authAxios from '@/services/api.service.js'
 
 const state = {
-  dashboard: 'dashbboard',
+  authenticated: null,
+  companies: [],
 }
 const getters = {
-  getDashboard: (state) => state.dashboard,
+  isLoggedIn: (state) => state.authenticated,
+  getCompanies: (state) => state.companies,
+  getCompany: (state) => (id) =>
+    state.companies.find((item) => {
+      return item.id === id
+    }),
 }
-const mutations = {}
+const mutations = {
+  setToken: (state, token) => {
+    state.authenticated = token
+  },
+  setCompanies: (state, data) => (state.companies = data),
+}
 const actions = {
-  login(content, data) {
+  loginUser({ commit }, loginCreds) {
     return new Promise((resolve, reject) => {
-      authAxios.post('oauth/token', null, data).then((response) => {
-        console.log("reesponse get", response)
-        resolve(response);
-      })
-      .catch((err) => {
-        reject(err);
-      });
+      this.$auth
+        .loginWith('local', {
+          data: loginCreds,
+        })
+        .then((response) => {
+          resolve(response)
+          commit('setCompanies', this.$auth.user.companies)
+        })
+        .catch((err) => {
+          reject(err)
+        })
     })
   },
 }

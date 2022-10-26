@@ -2,15 +2,15 @@
   <v-app dark>
     <div>
       <v-btn
-        v-if="routeCheck"
+        v-show="loggedIn"
         class="float-right btn-width ma-4"
         color="primary"
-        @click="$router.push({ path: '/' })"
+        @click="logout()"
         >Logout</v-btn
       >
     </div>
-    <v-main>
-      <v-container>
+    <v-main class="d-flex justify-center alignn-center">
+      <v-container class="d-flex justify-center alignn-center">
         <Nuxt />
       </v-container>
     </v-main>
@@ -21,25 +21,26 @@
 </template>
 
 <script>
-import { mapGetters } from "vuex";
+import { mapGetters } from 'vuex'
 export default {
   name: 'DefaultLayout',
-  computed: {
-    ...mapGetters(["getLogin", "getDashboard"]),
-  },
   data() {
     return {
       fixed: false,
-      routeCheck: false,
     }
   },
-  mounted() {
-    console.log("getter", this.getLogin, this.getDashboard)
+  computed: {
+    ...mapGetters(['getLogin']),
+    loggedIn() {
+      return !!this.$auth.loggedIn || this.$route.path !== '/login'
+    },
   },
-  watch: {
-    $route(to) {
-      if (to.path !== '/') this.routeCheck = true
-      else this.routeCheck = false
+  methods: {
+    logout() {
+      this.$auth.logout().then(() => {
+        this.$store.commit('setToken', null)
+        this.$router.push({ path: '/login' })
+      })
     },
   },
 }
