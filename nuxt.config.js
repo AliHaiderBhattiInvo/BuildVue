@@ -12,12 +12,12 @@ export default {
         {
           name: 'Login',
           path: '/login',
-          component: resolve(__dirname, 'pages/Login/Login.vue'),
+          component: resolve(__dirname, 'pages/Login/LoginPage.vue'),
         },
         {
           name: 'ProjectsList',
           path: '/projects',
-          component: resolve(__dirname, 'pages/Projects/ProjectsList.vue'),
+          component: resolve(__dirname, 'pages/Projects/ProjectsListPage.vue'),
         },
         {
           name: 'ProjectDetails',
@@ -27,12 +27,12 @@ export default {
         {
           name: 'PhasesList',
           path: '/projects/:projectId/phases',
-          component: resolve(__dirname, 'pages/Phases/PhasesList.vue'),
+          component: resolve(__dirname, 'pages/Phases/PhasesListPage.vue'),
         },
         {
           name: 'PhaseDetails',
           path: '/projects/:projectId/phases/:phaseId',
-          component: resolve(__dirname, 'pages/Phases/PhaseDetails.vue'),
+          component: resolve(__dirname, 'pages/Phases/PhaseDetailsPage.vue'),
         }
       )
     },
