@@ -11,7 +11,7 @@
       <v-container>
         <v-row>
           <v-col cols="12" md="4">
-            <v-card class="mb-4" max-width="344">
+            <v-card class="mb-4">
               <v-img
                 src="https://cdn.vuetifyjs.com/images/cards/sunshine.jpg"
                 height="200px"
@@ -38,7 +38,7 @@
                 outlined
                 @click="addTask()"
               >
-                <v-icon>mdi-plus-thick</v-icon>
+                <v-icon>mdi-plus</v-icon>
                 Add
               </v-btn>
             </div>

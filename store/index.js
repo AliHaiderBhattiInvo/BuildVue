@@ -1,6 +1,7 @@
 import Vue from 'vue'
 import Vuex from 'vuex'
 import auth from './modules/auth'
+import project from './modules/project'
 
 Vue.use(Vuex)
 
@@ -22,5 +23,6 @@ export default {
   actions,
   modules: {
     auth,
+    project,
   },
 }

@@ -1,9 +1,9 @@
 {
   "config": {
     "nuxt": {
-    "port": "4000"
-    } 
-    },
+      "port": "4000"
+    }
+  },
   "name": "BuildVue",
   "version": "1.0.0",
   "private": true,
