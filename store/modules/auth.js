@@ -30,6 +30,10 @@ const actions = {
         })
         .then((response) => {
           commit('setCompanies', this.$auth.user.companies)
+          localStorage.setItem(
+            'setCompanies',
+            JSON.stringify(this.$auth.user.companies)
+          )
           commit('setSelectedCompany', this.$auth.user.companies[0])
           localStorage.setItem(
             'setSelectedCompany',
