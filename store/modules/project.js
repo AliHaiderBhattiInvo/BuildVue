@@ -4,10 +4,12 @@ const _unionBy = require('lodash/unionBy')
 
 const state = {
   projects: [],
+  selectedProject: null,
   lastPage: null,
 }
 const getters = {
   getProjects: (state) => state.projects,
+  getSelectedProject: (state) => state.selectedProject,
   getLastPage: (state) => state.lastPage,
 }
 const mutations = {
@@ -15,6 +17,7 @@ const mutations = {
     // state.projects = state.projects.concat(data)
     state.projects = _unionBy(state.projects, data, 'id')
   },
+  setSelectedProject: (state, data) => (state.selectedProject = data),
   setEmptyProjects: (state, data) => (state.projects = data),
   setNewProject: (state, data) => state.projects.unshift(data),
   setLastPage: (state, data) => (state.lastPage = data),
@@ -82,7 +85,7 @@ const actions = {
         })
     })
   },
-  removeProject({ commit, getters }, data) {
+  deleteProject({ commit, getters }, data) {
     return new Promise((resolve, reject) => {
       authAxios
         .delete(

@@ -2,6 +2,7 @@ import Vue from 'vue'
 import Vuex from 'vuex'
 import auth from './modules/auth'
 import project from './modules/project'
+import phase from './modules/phase'
 
 Vue.use(Vuex)
 
@@ -24,5 +25,6 @@ export default {
   modules: {
     auth,
     project,
+    phase,
   },
 }
