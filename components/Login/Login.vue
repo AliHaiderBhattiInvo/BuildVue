@@ -32,7 +32,7 @@
         Build<span class="green darken-2 rounded-lg px-2">Vue</span>
       </v-card-title>
     </div>
-    <v-card width="700">
+    <v-card :width="isMobile ? '350px' : '700px'">
       <v-card-text>
         <p
           v-if="validate"
@@ -148,6 +148,11 @@ export default {
       snackbarMessage: null,
       autofilled: false,
     }
+  },
+  computed: {
+    isMobile() {
+      return this.$breakpoints.sm || this.$breakpoints.sSm
+    },
   },
   methods: {
     ...mapActions(['loginUser']),
