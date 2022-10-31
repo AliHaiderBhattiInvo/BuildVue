@@ -154,15 +154,19 @@ export default {
     login() {
       const loginCreds = {
         client_id: 2,
-        client_secret: 'FuSgW8PkaxiD7VUhtGMDicQyinbJLDE6HziTPiel',
+        client_secret: process.env.client_secret,
         username: this.username,
         password: this.password,
         grant_type: 'password',
       }
       this.loader = true
       this.loginUser(loginCreds)
-        .then(() => {
+        .then((res) => {
           this.loader = false
+          if (!res.companies?.length) {
+            this.$auth.logout()
+            localStorage.removeItem('setSelectedCompany')
+          }
         })
         .catch((err) => {
           this.loader = false

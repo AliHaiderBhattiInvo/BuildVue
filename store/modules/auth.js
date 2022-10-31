@@ -36,7 +36,7 @@ const actions = {
             JSON.stringify(this.$auth.user.companies[0])
           )
           commit('setToken', response.data.access_token)
-          resolve(response)
+          resolve({ response, companies: this.$auth.user.companies })
         })
         .catch((err) => {
           reject(err)

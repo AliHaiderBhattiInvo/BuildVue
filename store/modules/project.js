@@ -34,7 +34,10 @@ const actions = {
   fetchProjects({ commit, getters }, currentPage) {
     return new Promise((resolve, reject) => {
       authAxios
-        .get(`companies/1/projects?page=${currentPage}`, getters.getToken)
+        .get(
+          `companies/${getters.getSelectedCompany.id}/projects?page=${currentPage}`,
+          getters.getToken
+        )
         .then((response) => {
           commit('setProjects', response.data.data)
           commit('setLastPage', response.data.meta.last_page)
