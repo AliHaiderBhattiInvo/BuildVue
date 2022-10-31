@@ -92,25 +92,34 @@
           </v-list>
         </v-menu>
 
-        <v-toolbar-title class="font-weight-bold text-h4">{{
-          title
-        }}</v-toolbar-title>
+        <v-toolbar-title
+          class="font-weight-bold"
+          :class="isMobile ? 'text-h5' : 'text-h4'"
+          >{{ title }}</v-toolbar-title
+        >
 
         <v-spacer></v-spacer>
         <v-btn
+          v-if="!isMobile"
           v-show="loggedIn"
           class="float-right create-btn-width ma-4"
           color="primary"
           @click="openProjectDialog = true"
           >Create {{ buttonTitle }}</v-btn
         >
-
+        <v-btn v-if="isMobile" @click="openProjectDialog = true"
+          ><v-icon color="red" dense>mdi-plus</v-icon></v-btn
+        >
         <v-btn
+          v-if="!isMobile"
           v-show="loggedIn"
           class="float-right btn-width ma-4"
           color="primary"
           @click="logout()"
           >Logout</v-btn
+        >
+        <v-btn class="ml-2" v-if="isMobile" v-show="loggedIn" @click="logout()"
+          ><v-icon color="red" dense>mdi-logout</v-icon></v-btn
         >
       </v-toolbar>
     </div>
@@ -169,6 +178,9 @@ export default {
               : false
           })
         : this.getCompanies
+    },
+    isMobile() {
+      return this.$breakpoints.sm || this.$breakpoints.sSm
     },
   },
   methods: {

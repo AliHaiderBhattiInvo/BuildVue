@@ -74,6 +74,25 @@ export default {
     // https://go.nuxtjs.dev/axios
     '@nuxtjs/axios',
     '@nuxtjs/auth',
+    'nuxt-breakpoints',
+
+    // With options
+    [
+      'nuxt-breakpoints',
+      {
+        breakpoints: {
+          // default options
+          sm: 576,
+          md: 768,
+          lg: 992,
+          xl: 1200,
+          options: {
+            polyfill: true,
+            throttle: 200,
+          },
+        },
+      },
+    ],
   ],
 
   // Axios module configuration: https://go.nuxtjs.dev/config-axios

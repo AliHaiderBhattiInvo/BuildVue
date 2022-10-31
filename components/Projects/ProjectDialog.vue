@@ -4,11 +4,7 @@
       ><v-card min-height="380">
         <v-card-title class="px-1 text-truncate dialog-title-border">
           <div class="d-flex justify-center float-left" style="width: 90%">
-            <span
-              class="d-inline-block text-truncate"
-              style="max-width: 300px"
-              :style="$vuetify.breakpoint.xs ? 'max-width: 100px;' : ''"
-            >
+            <span class="d-inline-block text-truncate" style="max-width: 300px">
               <b class="ui-theme-color modals-title-size">
                 {{ titleFlag }}
               </b>
