@@ -32,7 +32,65 @@
         height="70"
         class="toolbar"
       >
-        <v-app-bar-nav-icon lg color="white"></v-app-bar-nav-icon>
+        <v-menu
+          content-class="bg-color"
+          ref="menu"
+          :close-on-content-click="false"
+          transition="scale-transition"
+          min-width="auto"
+          left
+          nudge-top="200"
+          nudge-right="200"
+        >
+          <template v-slot:activator="{ on }">
+            <div v-on="on">
+              <v-app-bar-nav-icon
+                v-on="on"
+                lg
+                color="white"
+              ></v-app-bar-nav-icon>
+            </div>
+          </template>
+          <v-text-field
+            prepend-inner-icon="mdi-magnify"
+            background-color="white"
+            color="#2a206a"
+            placeholder="Search"
+            class="pa-1 position"
+            outlined
+            hide-details
+            autofocus
+            solo
+            dense
+            flat
+            v-model="search"
+          >
+          </v-text-field>
+          <v-list v-if="searchedCompanies" color="white">
+            <v-list-item
+              v-for="(company, index) in searchedCompanies"
+              :key="index"
+              class="pointer"
+              :class="
+                company.id == getSelectedCompany.id ? 'selected-company' : ''
+              "
+              @click="selectCompany(company)"
+              >{{ company.name }}
+              <v-spacer></v-spacer>
+
+              <div
+                v-if="company.id == getSelectedCompany.id"
+                class="caption ml-2 mr-1 default"
+              >
+                Default
+              </div>
+            </v-list-item>
+
+            <div v-if="search && !searchedCompanies.length">
+              <p class="no-results-found my-1">No results found.</p>
+            </div>
+          </v-list>
+        </v-menu>
 
         <v-toolbar-title class="font-weight-bold text-h4">{{
           title
@@ -90,20 +148,36 @@ export default {
       snackbar: false,
       snackbarMessagecolor: false,
       snackbarMessage: null,
+      search: null,
     }
   },
   computed: {
-    ...mapGetters(['getLogin', 'getToken', 'getSelectedCompany']),
+    ...mapGetters([
+      'getLogin',
+      'getToken',
+      'getSelectedCompany',
+      'getCompanies',
+    ]),
     loggedIn() {
       return !!this.$auth.loggedIn || this.$route.path !== '/login'
     },
+    searchedCompanies() {
+      return this.search && this.getCompanies
+        ? this.getCompanies.filter((item) => {
+            return item.name
+              ? item.name.toLowerCase().includes(this.search.toLowerCase())
+              : false
+          })
+        : this.getCompanies
+    },
   },
   methods: {
-    ...mapMutations(['setToken', 'setSelectedCompany']),
+    ...mapMutations(['setToken', 'setSelectedCompany', 'setCompanies']),
     logout() {
       this.$auth.logout().then(() => {
         this.$store.commit('setToken', null)
         localStorage.removeItem('setSelectedCompany')
+        localStorage.removeItem('setCompanies')
         this.$router.push({ path: '/login' })
       })
     },
@@ -120,6 +194,10 @@ export default {
         this.buttonTitle = 'Task'
       }
     },
+    selectCompany(company) {
+      console.log('company -->', company)
+      console.log('route', this.$route.name)
+    },
   },
   mounted() {
     this.$nuxt.$on('show-snackbar', (event) => {
@@ -131,6 +209,7 @@ export default {
     const token = localStorage.getItem('auth._token.local')
     if (token) {
       this.setToken(token.slice(7))
+      this.setCompanies(JSON.parse(localStorage.getItem('setCompanies')))
       this.setSelectedCompany(
         JSON.parse(localStorage.getItem('setSelectedCompany'))
       )
@@ -159,5 +238,20 @@ export default {
 .toolbar {
   color: white;
   background-color: #05e6f6 !important;
+}
+.bg-color {
+  background-color: white !important;
+}
+.no-results-found {
+  font-size: 13px;
+  color: grey;
+  text-align: center !important;
+  align-content: center !important;
+}
+.pointer {
+  cursor: pointer;
+}
+.selected-company {
+  background-color: rgb(249, 239, 255);
 }
 </style>
