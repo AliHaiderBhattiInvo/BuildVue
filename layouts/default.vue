@@ -103,6 +103,7 @@ export default {
     logout() {
       this.$auth.logout().then(() => {
         this.$store.commit('setToken', null)
+        localStorage.removeItem('setSelectedCompany')
         this.$router.push({ path: '/login' })
       })
     },

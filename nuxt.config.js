@@ -83,6 +83,7 @@ export default {
   },
   env: {
     baseURL: process.env.BASE_URL,
+    client_secret: process.env.CLIENT_SECRET,
   },
 
   // Vuetify module configuration: https://go.nuxtjs.dev/config-vuetify
