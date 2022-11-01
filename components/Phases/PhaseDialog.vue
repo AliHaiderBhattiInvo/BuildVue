@@ -1,6 +1,6 @@
 <template>
   <div>
-    <v-dialog v-model="projectDialogFlag" width="500"
+    <v-dialog v-model="phaseDialogFlag" width="500"
       ><v-card min-height="380">
         <v-card-title
           class="px-1 text-truncate dialog-title-border"
@@ -9,7 +9,7 @@
           <div class="d-flex justify-center float-left" style="width: 90%">
             <span class="d-inline-block text-truncate" style="max-width: 300px">
               <b class="ui-theme-color modals-title-size">
-                {{ titleFlag }}
+                {{ phaseTitleFlag }}
               </b>
             </span>
           </div>
@@ -20,7 +20,7 @@
             <v-icon
               small
               color="white"
-              @click="projectDialogFlag = false"
+              @click="phaseDialogFlag = false"
               class="d-flex mr-2"
             >
               mdi-close
@@ -33,7 +33,7 @@
         </div>
         <div style="max-width: 455px" class="mx-6">
           <v-text-field
-            v-model="projectTitle"
+            v-model="phaseTitle"
             color="purple darken-2"
             outlined
             autofocus
@@ -42,14 +42,6 @@
         <div class="mx-6 my-2">
           <label for="image">Upload Image *</label>
         </div>
-        <!-- <div>
-          <input
-            type="file"
-            id="file"
-            ref="file"
-            v-on:change="handleFileUpload()"
-          />
-        </div> -->
         <div class="d-flex ml-6 mr-2 align-center">
           <input type="file" id="file" ref="file" v-on:change="preview" />
 
@@ -69,7 +61,7 @@
           >
         </div>
         <v-card-actions class="d-flex mx-3">
-          <v-btn @click="projectDialogFlag = false">Cancel</v-btn>
+          <v-btn @click="phaseDialogFlag = false">Cancel</v-btn>
           <v-spacer></v-spacer>
           <v-btn @click="onSubmit()" class="ma-4" color="primary">Save</v-btn>
         </v-card-actions>
@@ -83,25 +75,24 @@ import { mapActions, mapGetters } from 'vuex'
 export default {
   props: [
     'openTaskDialog',
-    'titleFlag',
-    'projectName',
+    'phaseTitleFlag',
+    'phaseName',
     'imagePath',
-    'projectId',
+    'phaseId',
   ],
   data() {
     return {
-      projectDialogFlag: true,
-      projectTitle: this.projectName,
+      phaseDialogFlag: true,
+      phaseTitle: this.phaseName,
       file: '',
       imgSrc: this.imagePath,
-      projectID: this.projectId,
     }
   },
   computed: {
-    ...mapGetters(['getSelectedCompany']),
+    ...mapGetters(['getSelectedCompany', 'getSelectedProject']),
   },
   methods: {
-    ...mapActions(['createProject', 'updateProject']),
+    ...mapActions(['createPhase', 'updatePhase']),
     handleFileUpload() {
       this.file = this.$refs.file.files[0]
     },
@@ -109,22 +100,25 @@ export default {
       const formData = new FormData()
 
       formData.append('image', this.file)
-      formData.append('name', this.projectTitle)
+      formData.append('name', this.phaseTitle)
 
-      if (this.titleFlag === 'Create Project') {
+      if (this.phaseTitleFlag === 'Create Phase') {
         if (formData.get('image') && formData.get('name')) {
-          this.createProject(formData)
+          this.createPhase({
+            formData,
+            project_id: this.$route.params.projectId,
+          })
             .then(() => {
-              this.projectDialogFlag = false
+              this.phaseDialogFlag = false
               this.$nuxt.$emit('show-snackbar', {
                 snackbarMessagecolor: false,
-                snackbarMessage: 'Project created successfully!',
+                snackbarMessage: 'Phase created successfully!',
                 snackbar: true,
               })
             })
             .catch((err) => {
               if (err.status === 401) {
-                this.projectDialogFlag = false
+                this.phaseDialogFlag = false
                 this.$auth.logout()
               }
             })
@@ -135,16 +129,17 @@ export default {
             snackbar: true,
           })
         }
-      } else if (this.titleFlag === 'Update Project') {
+      } else if (this.phaseTitleFlag === 'Update Phase') {
         formData.append('_method', 'PUT')
         if (formData.get('image') && formData.get('name')) {
-          this.updateProject({
+          this.updatePhase({
             formData,
             company_id: this.getSelectedCompany.id,
-            project_id: this.projectId,
+            project_id: this.$route.params.projectId,
+            phase_id: this.phaseId,
           })
             .then(() => {
-              this.projectDialogFlag = false
+              this.phaseDialogFlag = false
               this.$nuxt.$emit('show-snackbar', {
                 snackbarMessagecolor: false,
                 snackbarMessage: 'Project updated successfully!',
@@ -153,7 +148,7 @@ export default {
             })
             .catch((err) => {
               if (err.status === 401) {
-                this.projectDialogFlag = false
+                this.phaseDialogFlag = false
                 this.$auth.logout()
               }
             })
@@ -174,8 +169,8 @@ export default {
     },
   },
   watch: {
-    projectDialogFlag(value) {
-      if (!value) this.$emit('update:openProjectDialog', false)
+    phaseDialogFlag(value) {
+      if (!value) this.$emit('update:openPhaseDialog', false)
     },
   },
 }
