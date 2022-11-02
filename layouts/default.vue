@@ -35,6 +35,7 @@
       <v-menu
         content-class="bg-color"
         ref="menu"
+        v-model="companyMenu"
         :close-on-content-click="false"
         transition="scale-transition"
         min-width="auto"
@@ -77,6 +78,7 @@
             <div
               v-if="company.id == getSelectedCompany.id"
               class="caption ml-2 mr-1 default"
+              style="color: indigo"
             >
               Default
             </div>
@@ -136,7 +138,7 @@
 </template>
 
 <script>
-import { mapGetters, mapMutations } from 'vuex'
+import { mapActions, mapGetters, mapMutations } from 'vuex'
 export default {
   name: 'DefaultLayout',
   components: {
@@ -156,6 +158,8 @@ export default {
       snackbarMessagecolor: false,
       snackbarMessage: null,
       search: null,
+      currentPage: 1,
+      companyMenu: false,
     }
   },
   computed: {
@@ -187,7 +191,9 @@ export default {
       'setSelectedCompany',
       'setCompanies',
       'setSelectedProject',
+      'setEmptyProjects',
     ]),
+    ...mapActions(['fetchProjects']),
     logout() {
       this.$auth.logout().then(() => {
         this.$store.commit('setToken', null)
@@ -211,8 +217,22 @@ export default {
       }
     },
     selectCompany(company) {
-      console.log('company -->', company)
-      console.log('route', this.$route.name)
+      if (this.getSelectedCompany.id !== company.id) {
+        this.setSelectedCompany(company)
+        localStorage.setItem('setSelectedCompany', JSON.stringify(company))
+        if (this.$route.name !== 'ProjectsList')
+          this.$router.push({ path: '/projects' })
+        else {
+          this.setEmptyProjects([])
+          this.fetchProjects(this.currentPage)
+        }
+        setTimeout(() => {
+          this.companyMenu = false
+        }, 1500)
+        this.snackbar = true
+        this.snackbarMessage = 'Company changed successfully!'
+        this.snackbarMessagecolor = false
+      }
     },
     openDialog() {
       if (this.buttonTitle === 'Project') this.openProjectDialog = true

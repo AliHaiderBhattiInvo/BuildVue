@@ -9,7 +9,10 @@
         class="mx-2 my-2"
       >
         <div class="d-flex">
-          <v-card-title style="color: #000c7a">
+          <v-card-title
+            class="d-inline-block text-truncate pointer"
+            style="color: #000c7a"
+          >
             {{ phase.name.toUpperCase() }}
           </v-card-title>
           <v-spacer></v-spacer>
@@ -50,19 +53,18 @@
 
         <v-img
           v-if="phase.image"
-          :src="baseUrl.slice(0, -8) + phase.image"
+          :src="
+            phase.image.includes('https://')
+              ? phase.image
+              : baseUrl.slice(0, -8) + phase.image
+          "
           height="250"
           width="350px"
         ></v-img>
-        <!-- <v-img
-            v-if="phase.image"
-            :src="phase.image"
-            width="350px"
-          ></v-img> -->
         <div
           v-else
           class="d-flex justify-center align-center"
-          style="height: 345px; width: 350px"
+          style="height: 250px; width: 350px"
         >
           <h4>No image found</h4>
         </div>
