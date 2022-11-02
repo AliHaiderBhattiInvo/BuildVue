@@ -12,14 +12,14 @@ const getters = {
     state.companies.find((item) => {
       return item.id === id
     }),
-  getSelectedCompany: (state) => state.getSelectedCompany,
+  getSelectedCompany: (state) => state.selectedCompany,
 }
 const mutations = {
   setToken: (state, data) => {
     state.token = data
   },
   setCompanies: (state, data) => (state.companies = data),
-  setSelectedCompany: (state, data) => (state.getSelectedCompany = data),
+  setSelectedCompany: (state, data) => (state.selectedCompany = data),
 }
 const actions = {
   loginUser({ commit, getters }, loginCreds) {
