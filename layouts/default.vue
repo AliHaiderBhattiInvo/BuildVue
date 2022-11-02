@@ -277,3 +277,8 @@ export default {
   background-color: rgb(207, 245, 253);
 }
 </style>
+<style>
+::-webkit-scrollbar {
+  width: 0px !important;
+}
+</style>
