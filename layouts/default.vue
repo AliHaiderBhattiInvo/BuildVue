@@ -259,7 +259,7 @@ export default {
 }
 .toolbar {
   color: white;
-  background-color: #00109b !important;
+  background-color: #000c7a !important;
 }
 .bg-color {
   background-color: white !important;

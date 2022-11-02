@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div class="d-flex justify-center align-center" style="height: 100vh">
     <!-- snackbar -->
     <v-snackbar
       v-model="snackbar"
@@ -26,13 +26,17 @@
       </template>
     </v-snackbar>
     <!-- card -->
-    <div class="logo py-4 d-flex justify-center">
-      <v-icon x-large color="green darken-2"> mdi-domain </v-icon>
-      <v-card-title class="text-h3">
-        Build<span class="green darken-2 rounded-lg px-2">Vue</span>
-      </v-card-title>
-    </div>
     <v-card :width="isMobile ? '350px' : '700px'">
+      <div class="logo py-4 d-flex justify-center">
+        <v-icon x-large color="#000c7a"> mdi-domain </v-icon>
+        <v-card-title class="text-h3">
+          Build<span
+            class="rounded-lg px-2"
+            style="background-color: #000c7a; color: white"
+            >Vue</span
+          >
+        </v-card-title>
+      </div>
       <v-card-text>
         <p
           v-if="validate"
@@ -49,7 +53,11 @@
         </div>
         <!--card Heading -->
         <v-card-title>
-          <p id="login-card-heading" class="font-weight-bold card-heading">
+          <p
+            id="login-card-heading"
+            class="font-weight-bold"
+            style="color: #000c7a"
+          >
             Login
           </p>
           <!-- <p>to get started with Task Timer</p> -->
@@ -192,6 +200,6 @@ export default {
   opacity: 0.9;
 }
 .btn-success {
-  background-color: #1cc283 !important;
+  background-color: #000c7a !important;
 }
 </style>

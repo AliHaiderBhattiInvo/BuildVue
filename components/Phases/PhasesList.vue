@@ -5,10 +5,13 @@
         v-for="(phase, index) in getPhases"
         :key="index"
         max-width="344"
+        min-height="400"
         class="mx-2 my-2"
       >
         <div class="d-flex">
-          <v-card-title> {{ phase.name.toUpperCase() }} </v-card-title>
+          <v-card-title style="color: #000c7a">
+            {{ phase.name.toUpperCase() }}
+          </v-card-title>
           <v-spacer></v-spacer>
           <v-menu
             ref="menu"
@@ -19,18 +22,26 @@
           >
             <template v-slot:activator="{ on }">
               <div v-on="on">
-                <v-btn text small fab>
-                  <v-icon v-on="on" dense>mdi-dots-vertical</v-icon></v-btn
+                <v-btn class="mt-3" text small fab>
+                  <v-icon v-on="on" dense color="#000c7a"
+                    >mdi-dots-vertical</v-icon
+                  ></v-btn
                 >
               </div>
             </template>
             <!-- date picker -->
             <v-list color="white">
-              <v-list-item class="pointer" @click.stop="editPhase(phase)"
+              <v-list-item
+                class="pointer"
+                style="color: #000c7a"
+                @click.stop="editPhase(phase)"
                 >Edit Phase</v-list-item
               >
               <hr />
-              <v-list-item class="pointer" @click.stop="removePhase(phase)"
+              <v-list-item
+                class="pointer"
+                style="color: #000c7a"
+                @click.stop="removePhase(phase)"
                 >Delete Phase</v-list-item
               >
             </v-list>
@@ -79,7 +90,11 @@
         </v-expand-transition>
       </v-card>
     </div>
-    <v-card v-if="!pageLoading" height="1" v-intersect.quiet="getNextPage" />
+    <v-card
+      v-if="!pageLoading && getPhases?.length >= 9"
+      height="1"
+      v-intersect.quiet="getNextPage"
+    />
     <div
       v-if="pageLoading"
       class="w-100 my-2 d-flex align-center justify-center"
@@ -96,7 +111,7 @@
       class="d-flex justify-center align-center w-100"
       style="height: 100vh"
     >
-      <h2>No Phases Found.</h2>
+      <h2 style="color: #000c7a">No Phases Found.</h2>
     </div>
     <PhaseDialog
       v-if="openPhaseDialog"

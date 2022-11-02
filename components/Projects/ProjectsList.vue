@@ -1,99 +1,101 @@
 <template>
   <div class="mt-1 w-100">
     <div class="pointer d-flex flex-wrap justify-center align-center">
-      <v-row class="pointer d-flex flex-wrap justify-center align-center">
-        <v-col
-          cols="12"
-          lg="4"
-          md="6"
-          sm="6"
-          v-for="(project, index) in getProjects"
-          @click="openProject(project)"
-          :key="index"
-          class="pointer d-flex flex-wrap justify-center align-center"
-        >
-          <v-card class="my-2">
-            <div class="d-flex">
-              <v-card-title> {{ project.name.toUpperCase() }} </v-card-title>
-              <v-spacer></v-spacer>
-              <v-menu
-                ref="menu"
-                :close-on-content-click="false"
-                transition="scale-transition"
-                min-width="auto"
-                left
+      <v-card
+        v-for="(project, index) in getProjects"
+        @click="openProject(project)"
+        :key="index"
+        max-width="344"
+        min-height="400"
+        class="mx-2 my-2"
+      >
+        <div class="d-flex">
+          <v-card-title style="color: #000c7a">
+            {{ project.name.toUpperCase() }}
+          </v-card-title>
+          <v-spacer></v-spacer>
+          <v-menu
+            ref="menu"
+            :close-on-content-click="false"
+            transition="scale-transition"
+            min-width="auto"
+            left
+          >
+            <template v-slot:activator="{ on }">
+              <div v-on="on">
+                <v-btn class="mt-3" text small fab>
+                  <v-icon v-on="on" dense color="#000c7a"
+                    >mdi-dots-vertical</v-icon
+                  ></v-btn
+                >
+              </div>
+            </template>
+            <!-- date picker -->
+            <v-list color="white">
+              <v-list-item
+                class="pointer"
+                style="color: #000c7a"
+                @click.stop="editProject(project)"
+                >Edit Project</v-list-item
               >
-                <template v-slot:activator="{ on }">
-                  <div v-on="on">
-                    <v-btn text small fab>
-                      <v-icon v-on="on" dense>mdi-dots-vertical</v-icon></v-btn
-                    >
-                  </div>
-                </template>
-                <!-- date picker -->
-                <v-list color="white">
-                  <v-list-item
-                    class="pointer"
-                    @click.stop="editProject(project)"
-                    >Edit Project</v-list-item
-                  >
-                  <hr />
-                  <v-list-item
-                    class="pointer"
-                    @click.stop="removeProject(project)"
-                    >Delete Project</v-list-item
-                  >
-                </v-list>
-              </v-menu>
-            </div>
+              <hr />
+              <v-list-item
+                class="pointer"
+                style="color: #000c7a"
+                @click.stop="removeProject(project)"
+                >Delete Project</v-list-item
+              >
+            </v-list>
+          </v-menu>
+        </div>
 
-            <v-img
-              v-if="project.image"
-              :src="baseUrl.slice(0, -8) + project.image"
-              height="250"
-              width="350px"
-            ></v-img>
-            <!-- <v-img
+        <v-img
+          v-if="project.image"
+          :src="baseUrl.slice(0, -8) + project.image"
+          height="250"
+          width="350px"
+        ></v-img>
+        <!-- <v-img
             v-if="project.image"
             :src="project.image"
             width="350px"
           ></v-img> -->
-            <div
-              v-else
-              class="d-flex justify-center align-center"
-              style="height: 345px; width: 350px"
-            >
-              <h4>No image found</h4>
-            </div>
+        <div
+          v-else
+          class="d-flex justify-center align-center"
+          style="height: 345px; width: 350px"
+        >
+          <h4>No image found</h4>
+        </div>
 
-            <!-- <v-card-subtitle> {{ project.subtitle }} </v-card-subtitle> -->
+        <!-- <v-card-subtitle> {{ project.subtitle }} </v-card-subtitle> -->
 
-            <v-card-actions>
-              <v-btn color="orange lighten-2" text> Explore </v-btn>
+        <v-card-actions>
+          <v-btn color="orange lighten-2" text> Explore </v-btn>
 
-              <v-spacer></v-spacer>
+          <v-spacer></v-spacer>
 
-              <v-btn icon @click="show = !show">
-                <v-icon>{{
-                  show ? 'mdi-chevron-up' : 'mdi-chevron-down'
-                }}</v-icon>
-              </v-btn>
-            </v-card-actions>
+          <v-btn icon @click="show = !show">
+            <v-icon>{{ show ? 'mdi-chevron-up' : 'mdi-chevron-down' }}</v-icon>
+          </v-btn>
+        </v-card-actions>
 
-            <v-expand-transition>
-              <div v-show="show">
-                <v-divider></v-divider>
+        <v-expand-transition>
+          <div v-show="show">
+            <v-divider></v-divider>
 
-                <v-card-text>
-                  <!-- {{ project.description }} -->
-                </v-card-text>
-              </div>
-            </v-expand-transition>
-          </v-card>
-        </v-col>
-      </v-row>
+            <v-card-text>
+              <!-- {{ project.description }} -->
+            </v-card-text>
+          </div>
+        </v-expand-transition>
+      </v-card>
     </div>
-    <v-card v-if="!pageLoading" height="1" v-intersect.quiet="getNextPage" />
+    <v-card
+      v-if="!pageLoading && getProjects?.length >= 9"
+      height="1"
+      v-intersect.quiet="getNextPage"
+    />
     <div
       v-if="pageLoading"
       class="w-100 my-2 d-flex align-center justify-center"
@@ -110,7 +112,7 @@
       class="d-flex justify-center align-center w-100"
       style="height: 100vh"
     >
-      <h2>No Projects Found.</h2>
+      <h2 style="color: #000c7a">No Projects Found.</h2>
     </div>
     <ProjectDialog
       v-if="openProjectDialog"
