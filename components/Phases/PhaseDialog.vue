@@ -4,7 +4,7 @@
       ><v-card min-height="380">
         <v-card-title
           class="px-1 text-truncate dialog-title-border"
-          style="background-color: #00109b; color: white"
+          style="background-color: #000c7a; color: white"
         >
           <div class="d-flex justify-center float-left" style="width: 90%">
             <span class="d-inline-block text-truncate" style="max-width: 300px">
@@ -61,9 +61,17 @@
           >
         </div>
         <v-card-actions class="d-flex mx-3">
-          <v-btn @click="phaseDialogFlag = false">Cancel</v-btn>
+          <v-btn @click="phaseDialogFlag = false" style="width: 100px"
+            >Cancel</v-btn
+          >
           <v-spacer></v-spacer>
-          <v-btn @click="onSubmit()" class="ma-4" color="primary">Save</v-btn>
+          <v-btn
+            @click="onSubmit()"
+            class="ma-4 btn"
+            color="#000c7a"
+            style="width: 100px"
+            >Save</v-btn
+          >
         </v-card-actions>
       </v-card>
     </v-dialog>
@@ -177,7 +185,7 @@ export default {
 </script>
 
 <style scoped>
-.mt-110 {
-  margin-top: 80px;
+.btn {
+  color: white;
 }
 </style>

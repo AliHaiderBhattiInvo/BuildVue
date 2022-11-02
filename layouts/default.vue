@@ -259,7 +259,7 @@ export default {
 }
 .toolbar {
   color: white;
-  background-color: #00109b !important;
+  background-color: #000c7a !important;
 }
 .bg-color {
   background-color: white !important;
@@ -275,5 +275,10 @@ export default {
 }
 .selected-company {
   background-color: rgb(207, 245, 253);
+}
+</style>
+<style>
+::-webkit-scrollbar {
+  width: 0px !important;
 }
 </style>
