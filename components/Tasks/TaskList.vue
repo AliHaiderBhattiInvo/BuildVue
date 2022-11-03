@@ -46,7 +46,6 @@
                   >
                 </v-btn>
               </div>
-              
             </div>
           </template>
           <!-- date picker -->
@@ -66,6 +65,7 @@
             class="my-1"
             style="margin-left: 20px"
             dense
+            @change="checkboxFun()"
           ></v-checkbox>
         </div>
         <v-card-actions class="d-flex justify-space-around mt-110">
@@ -113,6 +113,11 @@ export default {
         },
       ],
     }
+  },
+  methods: {
+    checkboxFun() {
+      // console.log('value')
+    },
   },
   watch: {
     taskDialogFlag(value) {

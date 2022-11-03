@@ -4,12 +4,12 @@ const _unionBy = require('lodash/unionBy')
 
 const state = {
   phases: [],
-  lastPage: null,
+  phaseLastPage: null,
 }
 
 const getters = {
   getPhases: (state) => state.phases,
-  getPhasesLastPage: (state) => state.lastPage,
+  getPhasesLastPage: (state) => state.phaseLastPage,
 }
 
 const mutations = {
@@ -17,7 +17,7 @@ const mutations = {
     state.phases = _unionBy(state.phases, payload, 'id')
   },
   setEmptyPhases: (state, payload) => (state.phases = payload),
-  setLastPage: (state, payload) => (state.lastPage = payload),
+  setPhaseLastPage: (state, payload) => (state.phaseLastPage = payload),
   setNewPhase: (state, payload) => state.phases.unshift(payload),
   setUpdatePhase: (state, payload) => {
     const id = state.phases.findIndex((item) => {
@@ -42,7 +42,7 @@ const actions = {
         )
         .then((response) => {
           commit('setPhases', response.data.data)
-          commit('setLastPage', response.data.meta.last_page)
+          commit('setPhaseLastPage', response.data.meta.last_page)
           resolve(response)
         })
         .catch((err) => {

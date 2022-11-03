@@ -1,5 +1,5 @@
 <template>
-  <div class="mt-1 w-100">
+  <div class="mt-2 w-100">
     <div class="pointer d-flex flex-wrap justify-center align-center">
       <v-card
         v-for="(phase, index) in getPhases"
@@ -7,6 +7,7 @@
         max-width="344"
         min-height="400"
         class="mx-2 my-2"
+        @click="openPhase(phase)"
       >
         <div class="d-flex">
           <v-card-title
@@ -154,9 +155,9 @@ export default {
   methods: {
     ...mapActions(['fetchPhases', 'deletePhase']),
     ...mapMutations(['setEmptyPhases']),
-    openPhase(index, project) {
+    openPhase(phase) {
       this.$router.push({
-        path: `${this.$route.path + '/' + index}`,
+        path: `${this.$route.path + '/' + phase.id + '/tasks'}`,
         params: { id: 'test title' },
       })
     },

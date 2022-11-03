@@ -32,7 +32,12 @@ export default {
         {
           name: 'PhaseDetails',
           path: '/projects/:projectId/phases/:phaseId',
-          component: resolve(__dirname, 'pages/Phases/PhaseDetailsPage.vue'),
+          redirect: { name: 'TasksLists' },
+        },
+        {
+          name: 'TasksList',
+          path: '/projects/:projectId/phases/:phaseId/tasks',
+          component: resolve(__dirname, 'pages/Tasks/TasksListPage.vue'),
         }
       )
     },
@@ -136,16 +141,22 @@ export default {
     },
     strategies: {
       local: {
+        token: {
+          property: 'access_token',
+          global: true,
+          required: true,
+          type: 'Bearer',
+        },
         endpoints: {
           login: {
             url: 'oauth/token',
             method: 'post',
             propertyName: 'access_token',
           },
-          logout: {
-            url: '',
-            method: 'delete',
-          },
+          // logout: {
+          //   url: '',
+          //   method: 'delete',
+          // },
           user: {
             url: 'users',
             method: 'get',
