@@ -134,6 +134,11 @@
       :phaseTitleFlag.sync="phaseTitleFlag"
       :projectId.sync="$route.params.projectIds"
     />
+    <TaskDialog
+      v-if="openTaskDialog"
+      :openTaskDialog.sync="openTaskDialog"
+      :taskTitleFlag.sync="taskTitleFlag"
+    />
   </v-app>
 </template>
 
@@ -144,6 +149,7 @@ export default {
   components: {
     ProjectDialog: () => import('../components/Projects/ProjectDialog.vue'),
     PhaseDialog: () => import('../components/Phases/PhaseDialog.vue'),
+    TaskDialog: () => import('../components/Tasks/TaskDialog.vue'),
   },
   data() {
     return {
@@ -152,8 +158,10 @@ export default {
       buttonTitle: '',
       openProjectDialog: false,
       openPhaseDialog: false,
+      openTaskDialog: false,
       titleFlag: 'Create Project',
       phaseTitleFlag: 'Create Phase',
+      taskTitleFlag: 'Create Task',
       snackbar: false,
       snackbarMessagecolor: false,
       snackbarMessage: null,
@@ -163,12 +171,7 @@ export default {
     }
   },
   computed: {
-    ...mapGetters([
-      'getLogin',
-      'getToken',
-      'getSelectedCompany',
-      'getCompanies',
-    ]),
+    ...mapGetters(['getToken', 'getSelectedCompany', 'getCompanies']),
     loggedIn() {
       return !!this.$auth.loggedIn || this.$route.path !== '/login'
     },
@@ -195,7 +198,7 @@ export default {
     ]),
     ...mapActions(['fetchProjects']),
     logout() {
-      this.$auth.logout().then(() => {
+      this.$auth.logout().finally(() => {
         this.$store.commit('setToken', null)
         localStorage.removeItem('setCompanies')
         localStorage.removeItem('setSelectedCompany')
@@ -211,7 +214,7 @@ export default {
       } else if (routeName === 'PhasesList') {
         this.title = 'Phases List'
         this.buttonTitle = 'Phase'
-      } else if (routeName === 'PhaseDetails') {
+      } else if (routeName === 'TasksList') {
         this.title = 'Tasks List'
         this.buttonTitle = 'Task'
       }
@@ -237,6 +240,7 @@ export default {
     openDialog() {
       if (this.buttonTitle === 'Project') this.openProjectDialog = true
       else if (this.buttonTitle === 'Phase') this.openPhaseDialog = true
+      else if (this.buttonTitle === 'Task') this.openTaskDialog = true
     },
   },
   mounted() {

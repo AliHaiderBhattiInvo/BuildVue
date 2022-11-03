@@ -1,5 +1,5 @@
 <template>
-  <div class="mt-1 w-100">
+  <div class="mt-2 w-100">
     <div class="pointer d-flex flex-wrap justify-center align-center">
       <v-card
         v-for="(project, index) in getProjects"
@@ -199,7 +199,11 @@ export default {
   },
   mounted() {
     this.setEmptyProjects([])
-    this.fetchProjects(this.currentPage)
+    if (this.getSelectedCompany?.id) {
+      this.fetchProjects(this.currentPage)
+    } else {
+      this.$auth.logout()
+    }
   },
 }
 </script>

@@ -78,8 +78,13 @@
             class="ma-4 btn"
             color="#000c7a"
             style="width: 100px"
-            >Save</v-btn
-          >
+            >Save
+            <v-progress-circular
+              v-if="loader"
+              indeterminate
+              class="ml-2"
+            ></v-progress-circular>
+          </v-btn>
         </v-card-actions>
       </v-card>
     </v-dialog>
@@ -103,6 +108,7 @@ export default {
       file: '',
       imgSrc: this.imagePath,
       projectID: this.projectId,
+      loader: false,
     }
   },
   computed: {
@@ -121,8 +127,10 @@ export default {
 
       if (this.titleFlag === 'Create Project') {
         if (formData.get('image') && formData.get('name')) {
+          this.loader = true
           this.createProject(formData)
             .then(() => {
+              this.loader = false
               this.projectDialogFlag = false
               this.$nuxt.$emit('show-snackbar', {
                 snackbarMessagecolor: false,
@@ -132,6 +140,7 @@ export default {
             })
             .catch((err) => {
               if (err.status === 401) {
+                this.loader = false
                 this.projectDialogFlag = false
                 this.$auth.logout()
               }
@@ -146,12 +155,14 @@ export default {
       } else if (this.titleFlag === 'Update Project') {
         formData.append('_method', 'PUT')
         if (formData.get('image') && formData.get('name')) {
+          this.loader = true
           this.updateProject({
             formData,
             company_id: this.getSelectedCompany.id,
             project_id: this.projectId,
           })
             .then(() => {
+              this.loader = false
               this.projectDialogFlag = false
               this.$nuxt.$emit('show-snackbar', {
                 snackbarMessagecolor: false,
@@ -161,6 +172,7 @@ export default {
             })
             .catch((err) => {
               if (err.status === 401) {
+                this.loader = false
                 this.projectDialogFlag = false
                 this.$auth.logout()
               }

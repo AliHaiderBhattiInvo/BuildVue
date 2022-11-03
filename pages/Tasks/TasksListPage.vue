@@ -1,13 +1,13 @@
 <template>
   <div>
-    <PhaseDetails></PhaseDetails>
+    <TasksList></TasksList>
   </div>
 </template>
 <script>
 export default {
   middleware: 'auth',
   components: {
-    PhaseDetails: () => import('../../components/Phases/PhaseDetails.vue'),
+    TasksList: () => import('../../components/Tasks/TasksList.vue'),
   },
 }
 </script>

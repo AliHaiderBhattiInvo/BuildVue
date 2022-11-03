@@ -70,8 +70,13 @@
             class="ma-4 btn"
             color="#000c7a"
             style="width: 100px"
-            >Save</v-btn
-          >
+            >Save
+            <v-progress-circular
+              v-if="loader"
+              indeterminate
+              class="ml-2"
+            ></v-progress-circular
+          ></v-btn>
         </v-card-actions>
       </v-card>
     </v-dialog>
@@ -94,6 +99,7 @@ export default {
       phaseTitle: this.phaseName,
       file: '',
       imgSrc: this.imagePath,
+      loader: false,
     }
   },
   computed: {
@@ -112,11 +118,13 @@ export default {
 
       if (this.phaseTitleFlag === 'Create Phase') {
         if (formData.get('image') && formData.get('name')) {
+          this.loader = true
           this.createPhase({
             formData,
             project_id: this.$route.params.projectId,
           })
             .then(() => {
+              this.loader = false
               this.phaseDialogFlag = false
               this.$nuxt.$emit('show-snackbar', {
                 snackbarMessagecolor: false,
@@ -126,6 +134,7 @@ export default {
             })
             .catch((err) => {
               if (err.status === 401) {
+                this.loader = false
                 this.phaseDialogFlag = false
                 this.$auth.logout()
               }
@@ -140,6 +149,7 @@ export default {
       } else if (this.phaseTitleFlag === 'Update Phase') {
         formData.append('_method', 'PUT')
         if (formData.get('image') && formData.get('name')) {
+          this.loader = true
           this.updatePhase({
             formData,
             company_id: this.getSelectedCompany.id,
@@ -147,6 +157,7 @@ export default {
             phase_id: this.phaseId,
           })
             .then(() => {
+              this.loader = false
               this.phaseDialogFlag = false
               this.$nuxt.$emit('show-snackbar', {
                 snackbarMessagecolor: false,
@@ -156,6 +167,7 @@ export default {
             })
             .catch((err) => {
               if (err.status === 401) {
+                this.loader = false
                 this.phaseDialogFlag = false
                 this.$auth.logout()
               }

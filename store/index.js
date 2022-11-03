@@ -3,17 +3,12 @@ import Vuex from 'vuex'
 import auth from './modules/auth'
 import project from './modules/project'
 import phase from './modules/phase'
+import task from './modules/task'
 
 Vue.use(Vuex)
 
-const state = {
-  login: 'ali haider',
-}
-const getters = {
-  getLogin(state) {
-    return state.login
-  },
-}
+const state = {}
+const getters = {}
 const mutations = {}
 const actions = {}
 
@@ -26,5 +21,6 @@ export default {
     auth,
     project,
     phase,
+    task,
   },
 }
