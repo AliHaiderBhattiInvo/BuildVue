@@ -128,6 +128,7 @@
 
 <script>
 import { mapActions, mapGetters } from 'vuex'
+import snackbarMixin from '../../mixins/snackbar'
 export default {
   props: [
     'openTaskDialog',
@@ -137,6 +138,7 @@ export default {
     'taskStartDate',
     'taskEndDate',
   ],
+  mixins: [snackbarMixin],
   data() {
     return {
       taskDialogFlag: true,
@@ -153,17 +155,16 @@ export default {
     ...mapGetters(['getSelectedCompany', 'getSelectedProject']),
   },
   methods: {
-    ...mapActions(['createTask', 'updateTask']),
+    ...mapActions(['createTask', 'updateTask', 'logout']),
     dateCheck() {
       const validate = Date.parse(this.startDate) <= Date.parse(this.endDate)
       if (!validate) {
         this.endDate = null
-        this.$nuxt.$emit('show-snackbar', {
-          snackbarMessagecolor: true,
-          snackbarMessage:
-            'End date must be greater than or equal to start date!',
-          snackbar: true,
-        })
+        this.showSnackbar(
+          true,
+          'End date must be greater than or equal to start date!',
+          true
+        )
       } else this.menu2 = false
     },
     onSubmit() {
@@ -171,14 +172,10 @@ export default {
       formData.append('name', this.taskTitle)
       formData.append(
         'start_date',
-        this.startDate.split('-').reverse().join('-')
+        this.startDate?.split('-').reverse().join('-')
       )
-      formData.append('end_date', this.endDate.split('-').reverse().join('-'))
-      if (
-        formData.get('name') &&
-        formData.get('start_date') &&
-        formData.get('end_date')
-      ) {
+      formData.append('end_date', this.endDate?.split('-').reverse().join('-'))
+      if (this.taskTitle && this.startDate && this.endDate) {
         if (this.taskTitleFlag === 'Create Task') {
           this.loader = true
           this.createTask({
@@ -186,20 +183,28 @@ export default {
             project_id: this.$route.params.projectId,
             phase_id: this.$route.params.phaseId,
           })
-            .then(() => {
+            .then((res) => {
               this.loader = false
               this.taskDialogFlag = false
-              this.$nuxt.$emit('show-snackbar', {
-                snackbarMessagecolor: false,
-                snackbarMessage: 'Task created successfully!',
-                snackbar: true,
-              })
+              if (
+                res.status === 204 ||
+                res.status === 200 ||
+                res.status === 201
+              ) {
+                this.showSnackbar(true, 'Task created successfully!', false)
+              }
             })
             .catch((err) => {
               if (err.status === 401) {
-                this.loader = false
                 this.taskDialogFlag = false
-                this.$auth.logout()
+                this.showSnackbar(true, err.data.data.message, true)
+                setTimeout(() => {
+                  this.logout()
+                }, 1000)
+              }
+              if (err.status === 400) {
+                this.loader = false
+                this.showSnackbar(true, err.data.data.message, true)
               }
             })
         } else if (this.taskTitleFlag === 'Update Task') {
@@ -212,29 +217,27 @@ export default {
             phase_id: this.$route.params.phaseId,
             task_id: this.taskId,
           })
-            .then(() => {
+            .then((res) => {
               this.loader = false
               this.taskDialogFlag = false
-              this.$nuxt.$emit('show-snackbar', {
-                snackbarMessagecolor: false,
-                snackbarMessage: 'Task updated successfully!',
-                snackbar: true,
-              })
+              if (res.status === 204 || res.status === 200)
+                this.showSnackbar(true, 'Task updated successfully!', false)
             })
             .catch((err) => {
               if (err.status === 401) {
-                this.loader = false
                 this.taskDialogFlag = false
-                this.$auth.logout()
+                this.showSnackbar(true, err.data.data.message, true)
+                setTimeout(() => {
+                  this.logout()
+                }, 1000)
+              }
+              if (err.status === 400) {
+                this.loader = false
+                this.showSnackbar(true, err.data.data.message, true)
               }
             })
         }
-      } else
-        this.$nuxt.$emit('show-snackbar', {
-          snackbarMessagecolor: true,
-          snackbarMessage: 'Please select / enter all values!',
-          snackbar: true,
-        })
+      } else this.showSnackbar(true, 'Please select / enter all values!', true)
     },
   },
   watch: {

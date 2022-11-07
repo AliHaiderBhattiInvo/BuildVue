@@ -100,6 +100,23 @@ const actions = {
         })
     })
   },
+  getSingleTask({ commit, getters }, data) {
+    return new Promise((resolve, reject) => {
+      authAxios
+        .get(
+          `companies/${getters.getSelectedCompany.id}/projects/${data.project_id}/phases/${data.phase_id}/tasks/${data.task_id}?company_id=${data.company_id}&project_id=${data.project_id}&phase_id=${data.phase_id}&task_id=${data.task_id}`,
+          getters.getToken,
+          data.formData
+        )
+        .then((res) => {
+          commit('setUpdateTask', res.data.data)
+          resolve(res)
+        })
+        .catch((err) => {
+          reject(err.response)
+        })
+    })
+  },
 }
 
 export default {

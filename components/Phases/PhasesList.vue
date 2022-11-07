@@ -11,10 +11,10 @@
       >
         <div class="d-flex">
           <v-card-title
-            class="d-inline-block text-truncate pointer"
+            class="d-inline-block text-truncate pointer text-capitalize"
             style="color: #000c7a"
           >
-            {{ phase.name.toUpperCase() }}
+            {{ phase.name }}
           </v-card-title>
           <v-spacer></v-spacer>
           <v-menu
@@ -45,7 +45,10 @@
               <v-list-item
                 class="pointer"
                 style="color: #000c7a"
-                @click.stop="removePhase(phase)"
+                @click.stop="
+                  deleteId = phase.id
+                  dialog = true
+                "
                 >Delete Phase</v-list-item
               >
             </v-list>
@@ -116,6 +119,32 @@
     >
       <h2 style="color: #000c7a">No Phases Found.</h2>
     </div>
+    <v-dialog v-model="dialog" persistent max-width="290">
+      <v-card>
+        <v-card-text class="pt-4"
+          >Are you sure you want to delete this phase?</v-card-text
+        >
+        <v-card-actions>
+          <v-btn
+            color="success"
+            class="white--text"
+            small
+            @click="removePhase()"
+          >
+            Yes<v-progress-circular
+              v-if="loader"
+              indeterminate
+              size="20"
+              class="ml-2"
+            ></v-progress-circular>
+          </v-btn>
+          <v-spacer></v-spacer>
+          <v-btn color="red" class="white--text" small @click="dialog = false">
+            No
+          </v-btn>
+        </v-card-actions>
+      </v-card>
+    </v-dialog>
     <PhaseDialog
       v-if="openPhaseDialog"
       :openPhaseDialog.sync="openPhaseDialog"
@@ -129,9 +158,11 @@
 
 <script>
 import { mapActions, mapGetters, mapMutations } from 'vuex'
+import snackbarMixin from '../../mixins/snackbar'
 export default {
   name: 'PhasesList',
   middleware: 'auth',
+  mixins: [snackbarMixin],
   components: {
     PhaseDialog: () => import('./PhaseDialog.vue'),
   },
@@ -147,13 +178,16 @@ export default {
       phaseName: null,
       imagePath: null,
       projectId: null,
+      dialog: false,
+      deleteId: null,
+      loader: false,
     }
   },
   computed: {
     ...mapGetters(['getPhases', 'getPhasesLastPage', 'getSelectedCompany']),
   },
   methods: {
-    ...mapActions(['fetchPhases', 'deletePhase']),
+    ...mapActions(['fetchPhases', 'deletePhase', 'logout']),
     ...mapMutations(['setEmptyPhases']),
     openPhase(phase) {
       this.$router.push({
@@ -161,25 +195,27 @@ export default {
         params: { id: 'test title' },
       })
     },
-    removePhase(phase) {
+    removePhase() {
+      this.loader = true
       this.deletePhase({
         company_id: this.getSelectedCompany.id,
         project_id: this.$route.params.projectId,
-        phase_id: phase.id,
+        phase_id: this.deleteId,
       })
         .then((res) => {
-          if (res.status === 204) {
-            this.$nuxt.$emit('show-snackbar', {
-              snackbarMessagecolor: false,
-              snackbarMessage: 'Project deleted successfully!',
-              snackbar: true,
-            })
-          }
+          this.loader = true
+          this.dialog = false
+          this.deleteId = null
+          if (res.status === 204 || res.status === 200 || res.status === 201)
+            this.showSnackbar(true, 'Phase deleted successfully!', false)
         })
         .catch((err) => {
           if (err.status === 401) {
-            this.projectDialogFlag = false
-            this.$auth.logout()
+            this.openPhaseDialog = false
+            this.showSnackbar(true, err.data.data.message, true)
+            setTimeout(() => {
+              this.logout()
+            }, 1000)
           }
         })
     },
@@ -210,12 +246,12 @@ export default {
       projectId: this.$route.params.projectId,
       currentPage: this.currentPage,
     }).catch((err) => {
-      if (err.response.data) {
-        this.$nuxt.$emit('show-snackbar', {
-          snackbarMessagecolor: true,
-          snackbarMessage: `Project with ${this.$route.params.projectId} not exist!`,
-          snackbar: true,
-        })
+      if (err.response.status === 404) {
+        this.showSnackbar(
+          true,
+          `Project with ${this.$route.params.projectId} not exist!`,
+          true
+        )
         setTimeout(() => {
           this.$router.back()
         }, 1000)

@@ -4,6 +4,7 @@ import auth from './modules/auth'
 import project from './modules/project'
 import phase from './modules/phase'
 import task from './modules/task'
+import subtask from './modules/subtask'
 
 Vue.use(Vuex)
 
@@ -22,5 +23,6 @@ export default {
     project,
     phase,
     task,
+    subtask,
   },
 }

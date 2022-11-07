@@ -47,6 +47,15 @@ const actions = {
         })
     })
   },
+  logout({ commit }) {
+    this.$auth.logout().finally(() => {
+      commit('setToken', null)
+      localStorage.removeItem('setCompanies')
+      localStorage.removeItem('setSelectedCompany')
+      localStorage.removeItem('setSelectedProject')
+      this.$router.push({ path: '/login' })
+    })
+  },
 }
 export default {
   state,

@@ -85,6 +85,7 @@
 
 <script>
 import { mapActions, mapGetters } from 'vuex'
+import snackbarMixin from '../../mixins/snackbar'
 export default {
   props: [
     'openTaskDialog',
@@ -93,6 +94,7 @@ export default {
     'imagePath',
     'phaseId',
   ],
+  mixins: [snackbarMixin],
   data() {
     return {
       phaseDialogFlag: true,
@@ -106,16 +108,11 @@ export default {
     ...mapGetters(['getSelectedCompany', 'getSelectedProject']),
   },
   methods: {
-    ...mapActions(['createPhase', 'updatePhase']),
-    handleFileUpload() {
-      this.file = this.$refs.file.files[0]
-    },
+    ...mapActions(['createPhase', 'updatePhase', 'logout']),
     onSubmit() {
       const formData = new FormData()
-
       formData.append('image', this.file)
       formData.append('name', this.phaseTitle)
-
       if (this.phaseTitleFlag === 'Create Phase') {
         if (formData.get('image') && formData.get('name')) {
           this.loader = true
@@ -123,29 +120,31 @@ export default {
             formData,
             project_id: this.$route.params.projectId,
           })
-            .then(() => {
+            .then((res) => {
               this.loader = false
               this.phaseDialogFlag = false
-              this.$nuxt.$emit('show-snackbar', {
-                snackbarMessagecolor: false,
-                snackbarMessage: 'Phase created successfully!',
-                snackbar: true,
-              })
+              if (
+                res.status === 204 ||
+                res.status === 200 ||
+                res.status === 201
+              )
+                this.showSnackbar(true, 'Phase created successfully!', false)
             })
             .catch((err) => {
+              this.loader = false
               if (err.status === 401) {
-                this.loader = false
                 this.phaseDialogFlag = false
-                this.$auth.logout()
+                this.showSnackbar(true, err.data.data.message, true)
+                setTimeout(() => {
+                  this.logout()
+                }, 1000)
+              }
+              if (err.status === 400) {
+                this.showSnackbar(true, err.data.data.message, true)
               }
             })
-        } else {
-          this.$nuxt.$emit('show-snackbar', {
-            snackbarMessagecolor: true,
-            snackbarMessage: 'Please select / enter all values!',
-            snackbar: true,
-          })
-        }
+        } else
+          this.showSnackbar(true, 'Please select / enter all values!', true)
       } else if (this.phaseTitleFlag === 'Update Phase') {
         formData.append('_method', 'PUT')
         if (formData.get('image') && formData.get('name')) {
@@ -156,33 +155,29 @@ export default {
             project_id: this.$route.params.projectId,
             phase_id: this.phaseId,
           })
-            .then(() => {
+            .then((res) => {
               this.loader = false
               this.phaseDialogFlag = false
-              this.$nuxt.$emit('show-snackbar', {
-                snackbarMessagecolor: false,
-                snackbarMessage: 'Project updated successfully!',
-                snackbar: true,
-              })
+              if (res.status === 204 || res.status === 200)
+                this.showSnackbar(true, 'Phase updated successfully!', false)
             })
             .catch((err) => {
+              this.loader = false
+              if (err.status === 400)
+                this.showSnackbar(true, err.data.data.message, true)
               if (err.status === 401) {
-                this.loader = false
                 this.phaseDialogFlag = false
-                this.$auth.logout()
+                this.showSnackbar(true, err.data.data.message, true)
+                setTimeout(() => {
+                  this.logout()
+                }, 1000)
               }
             })
-        } else {
-          this.$nuxt.$emit('show-snackbar', {
-            snackbarMessagecolor: true,
-            snackbarMessage: 'Please select / enter all values!',
-            snackbar: true,
-          })
-        }
+        } else
+          this.showSnackbar(true, 'Please select / enter all values!', true)
       }
     },
     preview(e) {
-      //   const pic = document.getElementById('image')
       this.file = this.$refs.file.files[0]
       const imgSrc = window.URL.createObjectURL(e.target.files[0])
       this.imgSrc = imgSrc

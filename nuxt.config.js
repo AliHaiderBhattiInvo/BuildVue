@@ -32,7 +32,7 @@ export default {
         {
           name: 'PhaseDetails',
           path: '/projects/:projectId/phases/:phaseId',
-          redirect: { name: 'TasksLists' },
+          redirect: { name: 'TasksList' },
         },
         {
           name: 'TasksList',
