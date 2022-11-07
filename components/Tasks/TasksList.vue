@@ -1,19 +1,23 @@
 <template>
   <div class="mt-2 w-100">
-    <div class="pointer d-flex flex-wrap justify-center align-center">
+    <div
+      v-if="getTasks?.length"
+      class="pointer d-flex flex-wrap justify-center align-center"
+    >
       <v-card
         v-for="(task, index) in getTasks"
         :key="index"
         min-width="345"
         min-height="345"
-        class="mx-2 my-2"
+        class="mx-2 my-2 pointer"
+        @click="openSubTask(task)"
       >
         <div class="d-flex">
           <v-card-title
-            class="d-inline-block text-truncate pointer"
+            class="d-inline-block text-truncate pointer text-capitalize"
             style="color: #000c7a"
           >
-            {{ task.name.toUpperCase() }}
+            {{ task.name }}
           </v-card-title>
           <v-spacer></v-spacer>
           <v-menu
@@ -43,7 +47,10 @@
               <v-list-item
                 class="pointer"
                 style="color: #000c7a"
-                @click.stop="removeTask(task)"
+                @click.stop="
+                  deleteId = task.id
+                  dialog = true
+                "
                 >Delete Task</v-list-item
               >
             </v-list>
@@ -89,7 +96,7 @@
             :color="checkStatus(task.completion)"
           >
             <div class="font-13">
-              {{ task.completion + '%' }}
+              {{ Math.floor(task.completion) + '%' }}
             </div>
           </v-progress-circular>
         </div>
@@ -118,18 +125,32 @@
     >
       <h2 style="color: #000c7a">No Tasks Found.</h2>
     </div>
-    <!-- <div class="d-flex" v-for="item in checkLists" :key="item.id">
-      <v-checkbox
-        v-model="item.value"
-        :label="item.label"
-        hide-details
-        color="#2a206a"
-        class="my-1"
-        style="margin-left: 20px"
-        dense
-        @change="checkboxFun(item, $event)"
-      ></v-checkbox>
-    </div> -->
+    <v-dialog v-model="dialog" persistent max-width="290">
+      <v-card>
+        <v-card-text class="pt-4"
+          >Are you sure you want to delete this task?</v-card-text
+        >
+        <v-card-actions>
+          <v-btn
+            color="success"
+            class="white--text"
+            small
+            @click="removeTask()"
+          >
+            Yes<v-progress-circular
+              v-if="loader"
+              indeterminate
+              size="20"
+              class="ml-2"
+            ></v-progress-circular>
+          </v-btn>
+          <v-spacer></v-spacer>
+          <v-btn color="red" class="white--text" small @click="dialog = false">
+            No
+          </v-btn>
+        </v-card-actions>
+      </v-card>
+    </v-dialog>
     <TaskDialog
       v-if="openTaskDialog"
       :openTaskDialog.sync="openTaskDialog"
@@ -139,16 +160,24 @@
       :taskStartDate.sync="taskStartDate"
       :taskEndDate.sync="taskEndDate"
     ></TaskDialog>
+    <SubTasks
+      v-if="openSubTaskDialog"
+      :openSubTaskDialog.sync="openSubTaskDialog"
+      :taskId.sync="taskId"
+    ></SubTasks>
   </div>
 </template>
 
 <script>
 import { mapActions, mapGetters, mapMutations } from 'vuex'
+import snackbarMixin from '../../mixins/snackbar'
 export default {
   name: 'TasksList',
   middleware: 'auth',
+  mixins: [snackbarMixin],
   components: {
     TaskDialog: () => import('../../components/Tasks/TaskDialog.vue'),
+    SubTasks: () => import('../SubTasks/SubTasks.vue'),
   },
   data() {
     return {
@@ -159,64 +188,11 @@ export default {
       taskName: null,
       taskStartDate: null,
       taskEndDate: null,
-      date: null,
-      menu: false,
-      menu2: false,
-      show: false,
+      openSubTaskDialog: false,
       pageLoading: false,
-      texto: '',
-      getPhases: [
-        {
-          id: 1,
-          index: 'Task1',
-          name: 'Rip out',
-          status: 100,
-          date: '2022-12-02',
-        },
-        {
-          id: 2,
-          index: 'Task2',
-          name: 'First fittings',
-          status: 40,
-          date: '2022-12-02',
-        },
-        {
-          id: 3,
-          index: 'Task3',
-          name: 'Install',
-          status: 0,
-          date: '2022-12-02',
-        },
-        {
-          id: 4,
-          index: 'Task4',
-          name: 'Install',
-          status: 0,
-          date: '2022-12-02',
-        },
-      ],
-      checkLists: [
-        {
-          id: 1,
-          label: 'Checkbox 1',
-          value: true,
-        },
-        {
-          id: 2,
-          label: 'Checkbox 2',
-          value: true,
-        },
-        {
-          id: 3,
-          label: 'Checkbox 3',
-          value: true,
-        },
-        {
-          id: 4,
-          label: 'Checkbox 4',
-          value: true,
-        },
-      ],
+      dialog: false,
+      deleteId: null,
+      loader: false,
     }
   },
   computed: {
@@ -224,25 +200,12 @@ export default {
   },
   methods: {
     ...mapMutations(['setEmptyTasks']),
-    ...mapActions(['fetchTasks', 'deleteTask']),
-    addTask() {
-      if (this.texto.length) {
-        this.arrayTasks.push({
-          id: 1,
-          index: 'Task1',
-          title: this.texto,
-          status: 0,
-        })
-        this.texto = ''
-      }
-    },
+    ...mapActions(['fetchTasks', 'deleteTask', 'logout']),
     checkStatus(value) {
-      if (value >= 50) return 'green'
-      else if (value < 50 && value > 10) return 'yellow'
-      else if (value === 0) return 'red'
-    },
-    openTaskList() {
-      this.openTaskDialog = true
+      if (value >= 90) return 'green'
+      else if (value < 90 && value >= 50) return 'rgb(204, 100, 214)'
+      else if (value < 50 && value >= 11) return 'orange'
+      else if (value <= 10) return 'red'
     },
     getNextPage(_, __, isIntersecting) {
       if (isIntersecting) {
@@ -266,31 +229,33 @@ export default {
       this.taskStartDate = task.start_date.slice(0, 10)
       this.taskEndDate = task.end_date.slice(0, 10)
     },
-    checkboxFun(item, event) {
-      console.log('value', item, event)
-    },
-    removeTask(task) {
+    removeTask() {
+      this.loader = true
       this.deleteTask({
         company_id: this.getSelectedCompany.id,
         project_id: this.$route.params.projectId,
         phase_id: this.$route.params.phaseId,
-        task_id: task.id,
+        task_id: this.deleteId,
       })
         .then((res) => {
-          if (res.status === 204) {
-            this.$nuxt.$emit('show-snackbar', {
-              snackbarMessagecolor: false,
-              snackbarMessage: 'Task deleted successfully!',
-              snackbar: true,
-            })
-          }
+          this.loader = false
+          this.dialog = false
+          this.deleteId = null
+          if (res.status === 204 || res.status === 200 || res.status === 201)
+            this.showSnackbar(true, 'Task deleted successfully!', false)
         })
         .catch((err) => {
           if (err.status === 401) {
-            this.projectDialogFlag = false
-            this.$auth.logout()
+            this.showSnackbar(true, err.data.data.message, true)
+            setTimeout(() => {
+              this.logout()
+            }, 1000)
           }
         })
+    },
+    openSubTask(task) {
+      this.openSubTaskDialog = true
+      this.taskId = task.id
     },
   },
   mounted() {
@@ -300,12 +265,12 @@ export default {
       phaseId: this.$route.params.phaseId,
       currentPage: this.currentPage,
     }).catch((err) => {
-      if (err.response.data) {
-        this.$nuxt.$emit('show-snackbar', {
-          snackbarMessagecolor: true,
-          snackbarMessage: `Phase with ${this.$route.params.phaseId} not exist!`,
-          snackbar: true,
-        })
+      if (err.response.status === 404) {
+        this.showSnackbar(
+          true,
+          `Phase with ${this.$route.params.phaseId} not exist!`,
+          true
+        )
         setTimeout(() => {
           this.$router.back()
         }, 1000)
@@ -315,8 +280,8 @@ export default {
 }
 </script>
 <style scoped>
-.font-13 {
-  font-size: 13px;
+.font-14 {
+  font-size: 14px;
   font-weight: bold;
 }
 </style>

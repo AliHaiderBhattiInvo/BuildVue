@@ -11,10 +11,10 @@
       >
         <div class="d-flex">
           <v-card-title
-            class="d-inline-block text-truncate pointer"
+            class="d-inline-block text-truncate pointer text-capitalize"
             style="color: #000c7a"
           >
-            {{ project.name.toUpperCase() }}
+            {{ project.name }}
           </v-card-title>
           <v-spacer></v-spacer>
           <v-menu
@@ -45,7 +45,10 @@
               <v-list-item
                 class="pointer"
                 style="color: #000c7a"
-                @click.stop="removeProject(project)"
+                @click.stop="
+                  deleteId = project.id
+                  dialog = true
+                "
                 >Delete Project</v-list-item
               >
             </v-list>
@@ -116,6 +119,32 @@
     >
       <h2 style="color: #000c7a">No Projects Found.</h2>
     </div>
+    <v-dialog v-model="dialog" persistent max-width="290">
+      <v-card>
+        <v-card-text class="pt-4"
+          >Are you sure you want to delete this project?</v-card-text
+        >
+        <v-card-actions>
+          <v-btn
+            color="success"
+            class="white--text"
+            small
+            @click="removeProject()"
+          >
+            Yes<v-progress-circular
+              v-if="loader"
+              indeterminate
+              size="20"
+              class="ml-2"
+            ></v-progress-circular>
+          </v-btn>
+          <v-spacer></v-spacer>
+          <v-btn color="red" class="white--text" small @click="dialog = false">
+            No
+          </v-btn>
+        </v-card-actions>
+      </v-card>
+    </v-dialog>
     <ProjectDialog
       v-if="openProjectDialog"
       :openProjectDialog.sync="openProjectDialog"
@@ -128,9 +157,11 @@
 </template>
 <script>
 import { mapActions, mapGetters, mapMutations } from 'vuex'
+import snackbarMixin from '../../mixins/snackbar'
 export default {
   name: 'ProjectsPage',
   middleware: 'auth',
+  mixins: [snackbarMixin],
   components: {
     ProjectDialog: () => import('./ProjectDialog.vue'),
   },
@@ -145,13 +176,16 @@ export default {
       projectName: null,
       imagePath: null,
       projectId: null,
+      dialog: false,
+      deleteId: null,
+      loader: false,
     }
   },
   computed: {
     ...mapGetters(['getProjects', 'getLastPage', 'getSelectedCompany']),
   },
   methods: {
-    ...mapActions(['fetchProjects', 'deleteProject']),
+    ...mapActions(['fetchProjects', 'deleteProject', 'logout']),
     ...mapMutations(['setEmptyProjects', 'setSelectedProject']),
     openProject(project) {
       this.setSelectedProject(project)
@@ -164,24 +198,26 @@ export default {
       this.projectId = project.id
       this.imagePath = this.baseUrl.slice(0, -8) + project.image
     },
-    removeProject(project) {
+    removeProject() {
+      this.loader = true
       this.deleteProject({
         company_id: this.getSelectedCompany.id,
-        project_id: project.id,
+        project_id: this.deleteId,
       })
         .then((res) => {
-          if (res.status === 204) {
-            this.$nuxt.$emit('show-snackbar', {
-              snackbarMessagecolor: false,
-              snackbarMessage: 'Project deleted successfully!',
-              snackbar: true,
-            })
-          }
+          this.loader = false
+          this.dialog = false
+          this.deleteId = null
+          if (res.status === 204 || res.status === 200 || res.status === 201)
+            this.showSnackbar(true, 'Project deleted successfully!', false)
         })
         .catch((err) => {
           if (err.status === 401) {
-            this.projectDialogFlag = false
-            this.$auth.logout()
+            this.openProjectDialog = false
+            this.showSnackbar(true, err.data.data.message, true)
+            setTimeout(() => {
+              this.logout()
+            }, 1000)
           }
         })
     },
@@ -199,11 +235,10 @@ export default {
   },
   mounted() {
     this.setEmptyProjects([])
-    if (this.getSelectedCompany?.id) {
-      this.fetchProjects(this.currentPage)
-    } else {
-      this.$auth.logout()
-    }
+    this.fetchProjects(this.currentPage)
+  },
+  created() {
+    if (!this.getSelectedCompany?.id) this.logout()
   },
 }
 </script>

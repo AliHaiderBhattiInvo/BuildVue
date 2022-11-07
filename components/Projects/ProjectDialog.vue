@@ -42,14 +42,6 @@
         <div class="mx-6 my-2">
           <label for="image">Upload Image *</label>
         </div>
-        <!-- <div>
-          <input
-            type="file"
-            id="file"
-            ref="file"
-            v-on:change="handleFileUpload()"
-          />
-        </div> -->
         <div class="d-flex ml-6 mr-2 align-center">
           <input type="file" id="file" ref="file" v-on:change="preview" />
 
@@ -93,6 +85,7 @@
 
 <script>
 import { mapActions, mapGetters } from 'vuex'
+import snackbarMixin from '../../mixins/snackbar'
 export default {
   props: [
     'openTaskDialog',
@@ -101,6 +94,7 @@ export default {
     'imagePath',
     'projectId',
   ],
+  mixins: [snackbarMixin],
   data() {
     return {
       projectDialogFlag: true,
@@ -115,42 +109,40 @@ export default {
     ...mapGetters(['getSelectedCompany']),
   },
   methods: {
-    ...mapActions(['createProject', 'updateProject']),
-    handleFileUpload() {
-      this.file = this.$refs.file.files[0]
-    },
+    ...mapActions(['createProject', 'updateProject', 'logout']),
     onSubmit() {
       const formData = new FormData()
-
       formData.append('image', this.file)
       formData.append('name', this.projectTitle)
-
       if (this.titleFlag === 'Create Project') {
         if (formData.get('image') && formData.get('name')) {
           this.loader = true
           this.createProject(formData)
-            .then(() => {
+            .then((res) => {
               this.loader = false
-              this.projectDialogFlag = false
-              this.$nuxt.$emit('show-snackbar', {
-                snackbarMessagecolor: false,
-                snackbarMessage: 'Project created successfully!',
-                snackbar: true,
-              })
-            })
-            .catch((err) => {
-              if (err.status === 401) {
-                this.loader = false
+              if (
+                res.status === 204 ||
+                res.status === 200 ||
+                res.status === 201
+              ) {
+                this.showSnackbar(true, 'Project created successfully!', false)
                 this.projectDialogFlag = false
-                this.$auth.logout()
               }
             })
+            .catch((err) => {
+              this.loader = false
+              if (err.status === 401) {
+                this.projectDialogFlag = false
+                this.showSnackbar(true, err.data.data.message, true)
+                setTimeout(() => {
+                  this.logout()
+                }, 1000)
+              }
+              if (err.status === 400)
+                this.showSnackbar(true, err.data.data.message, true)
+            })
         } else {
-          this.$nuxt.$emit('show-snackbar', {
-            snackbarMessagecolor: true,
-            snackbarMessage: 'Please select / enter all values!',
-            snackbar: true,
-          })
+          this.showSnackbar(true, 'Please select / enter all values!', true)
         }
       } else if (this.titleFlag === 'Update Project') {
         formData.append('_method', 'PUT')
@@ -161,33 +153,31 @@ export default {
             company_id: this.getSelectedCompany.id,
             project_id: this.projectId,
           })
-            .then(() => {
+            .then((res) => {
               this.loader = false
-              this.projectDialogFlag = false
-              this.$nuxt.$emit('show-snackbar', {
-                snackbarMessagecolor: false,
-                snackbarMessage: 'Project updated successfully!',
-                snackbar: true,
-              })
-            })
-            .catch((err) => {
-              if (err.status === 401) {
-                this.loader = false
+
+              if (res.status === 204 || res.status === 200) {
+                this.showSnackbar(true, 'Project updated successfully!', false)
                 this.projectDialogFlag = false
-                this.$auth.logout()
               }
             })
-        } else {
-          this.$nuxt.$emit('show-snackbar', {
-            snackbarMessagecolor: true,
-            snackbarMessage: 'Please select / enter all values!',
-            snackbar: true,
-          })
-        }
+            .catch((err) => {
+              this.loader = false
+              if (err.status === 400)
+                this.showSnackbar(true, err.data.data.message, true)
+              if (err.status === 401) {
+                this.projectDialogFlag = false
+                this.showSnackbar(true, err.data.data.message, true)
+                setTimeout(() => {
+                  this.logout()
+                }, 1000)
+              }
+            })
+        } else
+          this.showSnackbar(true, 'Please select / enter all values!', true)
       }
     },
     preview(e) {
-      //   const pic = document.getElementById('image')
       this.file = this.$refs.file.files[0]
       const imgSrc = window.URL.createObjectURL(e.target.files[0])
       this.imgSrc = imgSrc

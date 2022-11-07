@@ -196,16 +196,7 @@ export default {
       'setSelectedProject',
       'setEmptyProjects',
     ]),
-    ...mapActions(['fetchProjects']),
-    logout() {
-      this.$auth.logout().finally(() => {
-        this.$store.commit('setToken', null)
-        localStorage.removeItem('setCompanies')
-        localStorage.removeItem('setSelectedCompany')
-        localStorage.removeItem('setSelectedProject')
-        this.$router.push({ path: '/login' })
-      })
-    },
+    ...mapActions(['fetchProjects', 'logout']),
     checkRouteName() {
       const routeName = this.$route.name
       if (routeName === 'ProjectsList') {
@@ -261,6 +252,7 @@ export default {
         JSON.parse(localStorage.getItem('setSelectedProject'))
       )
     }
+    if (!this.getSelectedCompany?.id) this.logout()
   },
   beforeDestroy() {
     this.$nuxt.$off('show-snackbar')
