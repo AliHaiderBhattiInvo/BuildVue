@@ -3,8 +3,8 @@
     <v-dialog v-model="taskDialogFlag" width="500"
       ><v-card min-height="380">
         <v-card-title
-          class="px-1 text-truncate dialog-title-border"
-          style="background-color: #000c7a; color: white"
+          class="px-1 text-truncate dialog-title-border theme-bg-color"
+          style="color: white"
         >
           <div class="d-flex justify-center float-left" style="width: 90%">
             <span class="d-inline-block text-truncate" style="max-width: 300px">
@@ -29,20 +29,18 @@
         </v-card-title>
         <hr />
         <div class="mx-6 my-2">
-          <label for="Email" style="color: #000c7a">Add Title *</label>
+          <label for="Email" class="theme-color">Add Title *</label>
         </div>
         <div style="max-width: 455px" class="mx-6">
           <v-text-field
             v-model="taskTitle"
-            color="purple darken-2"
+            color="yellow darken-2"
             outlined
             autofocus
           ></v-text-field>
         </div>
         <div class="d-flex mx-6">
-          <div for="start-date" class="mt-6" style="color: #000c7a">
-            Start Date *
-          </div>
+          <div for="start-date" class="mt-6 theme-color">Start Date *</div>
           <v-spacer></v-spacer>
           <v-menu
             ref="menu"
@@ -57,9 +55,10 @@
                 <v-text-field
                   v-model="startDate"
                   prepend-icon="mdi-calendar"
+                  color="yellow darken-2"
                   readonly
                 >
-                  <v-icon slot="prepend" color="#000c7a">
+                  <v-icon slot="prepend" class="theme-color">
                     mdi-calendar</v-icon
                   ></v-text-field
                 >
@@ -68,13 +67,12 @@
             <v-date-picker
               v-model="startDate"
               @input="menu = false"
+              color="yellow darken-2"
             ></v-date-picker>
           </v-menu>
         </div>
         <div class="d-flex mx-6">
-          <label for="end-date" class="mt-6" style="color: #000c7a"
-            >End Date *</label
-          >
+          <label for="end-date" class="mt-6 theme-color">End Date *</label>
           <v-spacer></v-spacer>
           <v-menu
             ref="menu"
@@ -89,9 +87,10 @@
                 <v-text-field
                   v-model="endDate"
                   prepend-icon="mdi-calendar"
+                  color="yellow darken-2"
                   readonly
                 >
-                  <v-icon slot="prepend" color="#000c7a">
+                  <v-icon slot="prepend" class="theme-color">
                     mdi-calendar</v-icon
                   ></v-text-field
                 >
@@ -100,6 +99,7 @@
             <v-date-picker
               v-model="endDate"
               @input="dateCheck()"
+              color="yellow darken-2"
             ></v-date-picker>
           </v-menu>
         </div>
@@ -110,8 +110,7 @@
           <v-spacer></v-spacer>
           <v-btn
             @click="onSubmit()"
-            class="ma-4 btn"
-            color="#000c7a"
+            class="ma-4 btn theme-color"
             style="width: 100px"
             >Save
             <v-progress-circular

@@ -4,6 +4,7 @@ const state = {
   token: null,
   companies: [],
   selectedCompany: null,
+  userRole: null,
 }
 const getters = {
   getToken: (state) => state.token,
@@ -13,6 +14,7 @@ const getters = {
       return item.id === id
     }),
   getSelectedCompany: (state) => state.selectedCompany,
+  getUserRole: (state) => state.userRole,
 }
 const mutations = {
   setToken: (state, data) => {
@@ -20,6 +22,15 @@ const mutations = {
   },
   setCompanies: (state, data) => (state.companies = data),
   setSelectedCompany: (state, data) => (state.selectedCompany = data),
+  setUserRole: (state, data) => {
+    if (
+      data.find((item) => {
+        return item === 'client'
+      })
+    )
+      state.userRole = 'client'
+    else state.userRole = 'admin'
+  },
 }
 const actions = {
   loginUser({ commit, getters }, loginCreds) {
@@ -40,6 +51,11 @@ const actions = {
             JSON.stringify(this.$auth.user.companies[0])
           )
           commit('setToken', response.data.access_token)
+          commit('setUserRole', this.$auth.user.roles)
+          localStorage.setItem(
+            'setUserRole',
+            JSON.stringify(getters.getUserRole)
+          )
           resolve({ response, companies: this.$auth.user.companies })
         })
         .catch((err) => {
@@ -53,6 +69,7 @@ const actions = {
       localStorage.removeItem('setCompanies')
       localStorage.removeItem('setSelectedCompany')
       localStorage.removeItem('setSelectedProject')
+      localStorage.removeItem('setUserRole')
       this.$router.push({ path: '/login' })
     })
   },

@@ -30,7 +30,7 @@
       app
       dense
       height="70"
-      class="toolbar elevation-1"
+      class="toolbar elevation-1 theme-bg-color"
     >
       <v-menu
         content-class="bg-color"
@@ -51,7 +51,7 @@
         <v-text-field
           prepend-inner-icon="mdi-magnify"
           background-color="white"
-          color="#2a206a"
+          color="yellow darken-2"
           placeholder="Search"
           class="pa-1 position"
           outlined
@@ -68,6 +68,7 @@
             v-for="(company, index) in searchedCompanies"
             :key="index"
             class="pointer"
+            style="color: rgb(255, 98, 0)"
             :class="
               company.id == getSelectedCompany.id ? 'selected-company' : ''
             "
@@ -77,8 +78,7 @@
 
             <div
               v-if="company.id == getSelectedCompany.id"
-              class="caption ml-2 mr-1 default"
-              style="color: indigo"
+              class="caption ml-2 mr-1 default theme-color"
             >
               Default
             </div>
@@ -98,29 +98,41 @@
 
       <v-spacer></v-spacer>
       <v-btn
-        v-if="!isMobile"
+        v-if="!isMobile && getUserRole === 'admin'"
         v-show="loggedIn"
-        class="create-btn-width mr-2"
+        class="create-btn-width theme-color mr-2"
         color="white"
         @click="openDialog()"
         >Create {{ buttonTitle }}</v-btn
       >
-      <v-btn v-if="isMobile" @click="openDialog()"
-        ><v-icon color="#00109b" dense>mdi-plus</v-icon></v-btn
+      <v-btn v-if="isMobile && getUserRole === 'admin'" @click="openDialog()"
+        ><v-icon class="theme-color" dense>mdi-plus</v-icon></v-btn
       >
       <v-btn
         v-if="!isMobile"
         v-show="loggedIn"
-        class="btn-width"
+        class="btn-width theme-color"
         color="white"
         @click="logout()"
         >Logout</v-btn
       >
       <v-btn class="ml-2" v-if="isMobile" v-show="loggedIn" @click="logout()"
-        ><v-icon color="#00109b" dense>mdi-logout</v-icon></v-btn
+        ><v-icon class="theme-color" dense>mdi-logout</v-icon></v-btn
       >
     </v-app-bar>
     <v-main style="height: calc(100vh - 70px)">
+      <div v-if="$route.name !== 'Login'" class="ml-3 mt-2">
+        <v-btn
+          v-if="!isMobile"
+          class="btn-width theme-color"
+          color="white"
+          @click="$router.back()"
+          >Back</v-btn
+        >
+        <v-btn class="ml-2 theme-color" v-if="isMobile" @click="$router.back()"
+          ><v-icon class="theme-color" dense>mdi-arrow-left</v-icon></v-btn
+        >
+      </div>
       <Nuxt class="d-flex justify-center align-center w-100" />
     </v-main>
     <ProjectDialog
@@ -171,7 +183,12 @@ export default {
     }
   },
   computed: {
-    ...mapGetters(['getToken', 'getSelectedCompany', 'getCompanies']),
+    ...mapGetters([
+      'getToken',
+      'getSelectedCompany',
+      'getCompanies',
+      'getUserRole',
+    ]),
     loggedIn() {
       return !!this.$auth.loggedIn || this.$route.path !== '/login'
     },
@@ -195,6 +212,7 @@ export default {
       'setCompanies',
       'setSelectedProject',
       'setEmptyProjects',
+      'setUserRole',
     ]),
     ...mapActions(['fetchProjects', 'logout']),
     checkRouteName() {
@@ -245,6 +263,7 @@ export default {
     if (token) {
       this.setToken(token.slice(7))
       this.setCompanies(JSON.parse(localStorage.getItem('setCompanies')))
+      this.setUserRole([JSON.parse(localStorage.getItem('setUserRole'))])
       this.setSelectedCompany(
         JSON.parse(localStorage.getItem('setSelectedCompany'))
       )
@@ -267,15 +286,12 @@ export default {
 <style scoped>
 .btn-width {
   width: 100px;
-  color: #00109b;
 }
 .create-btn-width {
   width: 140px;
-  color: #00109b;
 }
 .toolbar {
   color: white;
-  background-color: #000c7a !important;
 }
 .bg-color {
   background-color: white !important;
@@ -290,11 +306,17 @@ export default {
   cursor: pointer;
 }
 .selected-company {
-  background-color: rgb(207, 245, 253);
+  background-color: rgb(253, 243, 207);
 }
 </style>
 <style>
 ::-webkit-scrollbar {
   width: 0px !important;
+}
+.theme-color {
+  color: rgb(223, 164, 77) !important;
+}
+.theme-bg-color {
+  background-color: rgb(223, 164, 77) !important;
 }
 </style>
