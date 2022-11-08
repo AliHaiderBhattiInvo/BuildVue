@@ -53,13 +53,14 @@
           </v-menu>
         </div>
         <div v-if="phase.image">
-          <img
+          <v-img
             :src="
               phase.image.includes('https://')
                 ? phase.image
                 : baseUrl.slice(0, -8) + phase.image
             "
             class="box-fit"
+            contain
           />
         </div>
         <!-- <v-img
@@ -72,10 +73,11 @@
           height="250"
           width="350px"
         ></v-img> -->
-        <div v-if="!phase.image">
+        <div v-else>
           <img
             src="../../assets/images/buildvue_logo_500x500_notag.png"
             class="box-fit"
+            contain
           />
         </div>
       </v-card>
@@ -258,7 +260,6 @@ export default {
 }
 .box-fit {
   object-fit: contain !important;
-  object-position: center !important;
   width: 350px;
   height: 300px;
 }
