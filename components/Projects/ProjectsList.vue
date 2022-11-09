@@ -190,9 +190,11 @@ export default {
       this.openProjectDialog = true
       this.projectName = project.name
       this.projectId = project.id
-      this.imagePath = project.image?.includes('https://')
-        ? project.image
-        : this.baseUrl.slice(0, -8) + project.image
+      this.imagePath = project.image
+        ? project.image?.includes('https://')
+          ? project.image
+          : this.baseUrl.slice(0, -8) + project.image
+        : null
     },
     removeProject() {
       this.loader = true
