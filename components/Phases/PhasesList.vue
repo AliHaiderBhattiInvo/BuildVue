@@ -228,7 +228,9 @@ export default {
       this.openPhaseDialog = true
       this.phaseName = phase.name
       this.phaseId = phase.id
-      this.imagePath = this.baseUrl.slice(0, -8) + phase.image
+      this.imagePath = phase.image?.includes('https://')
+        ? phase.image
+        : this.baseUrl.slice(0, -8) + phase.image
     },
   },
   mounted() {
