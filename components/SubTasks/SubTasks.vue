@@ -3,8 +3,8 @@
     <v-dialog v-model="subTaskDialogFlag" scrollable max-width="600px"
       ><v-card max-width="600px">
         <v-card-title
-          class="px-1 text-truncate dialog-title-border"
-          style="background-color: #000c7a; color: white"
+          class="px-1 text-truncate dialog-title-border theme-bg-color"
+          style="color: white"
         >
           <div class="d-flex justify-center float-left" style="width: 90%">
             <span class="d-inline-block text-truncate" style="max-width: 300px">
@@ -25,7 +25,10 @@
             </v-icon>
           </div>
         </v-card-title>
-        <v-card-subtitle class="mt-3 w-100 px-4 py-0 mb-2">
+        <v-card-subtitle
+          v-if="getUserRole === 'admin'"
+          class="mt-3 w-100 px-4 py-0 mb-2"
+        >
           <div class="d-flex">
             <v-text-field
               v-model="name"
@@ -35,12 +38,14 @@
               outlined
               dense
               class="ml-5"
+              color="yellow darken-2"
               @keydown.enter="addSubTask()"
             >
               <div v-if="!isMobile" slot="append" class="d-flex">
                 <div
                   slot="append"
-                  style="font-size: 13px; margin-top: 3px; color: #2196f3"
+                  class="theme-color"
+                  style="font-size: 13px; margin-top: 3px"
                 >
                   enter
                 </div>
@@ -48,49 +53,56 @@
                   slot="append"
                   style="margin-top: 4px"
                   x-small
-                  color="blue"
+                  class="theme-color"
                   >mdi-keyboard-return</v-icon
                 >
               </div>
             </v-text-field>
             <v-btn
               v-if="!isMobile"
-              class="btn-width ml-2"
+              class="btn-width theme-color ml-2"
               color="white"
               @click="addSubTask()"
               >Add Sub Task</v-btn
             >
             <v-btn v-if="isMobile" class="ml-1 mt-1" small height="35px"
-              ><v-icon color="#00109b" dense>mdi-plus</v-icon></v-btn
+              ><v-icon class="theme-color" dense>mdi-plus</v-icon></v-btn
             >
           </div>
         </v-card-subtitle>
-        <v-card-text style="height: 480px">
+        <v-card-text class="mt-2" style="height: 480px">
           <div class="pa-0 ma-0">
             <div
               class="d-flex justify-center pa-0 ma-0"
-              v-for="item in getSubTasks"
+              v-for="(item, index) in getSubTasks"
               :key="item.id"
             >
+              <span style="margin-top: 10px" class="theme-color">
+                {{ index + 1 }}.
+              </span>
               <v-checkbox
                 v-show="editItem !== item.id"
                 :input-value="item.finished"
                 :label="item.name"
                 hide-details
-                color="#2a206a"
+                color="rgb(223, 164, 77)"
                 class="my-1"
-                style="margin-left: 20px"
+                :class="index >= 9 ? 'ml-1' : 'ml-3'"
                 dense
                 @change="changeSubTaskValue(item, $event)"
+                :disabled="getUserRole === 'client'"
               >
                 <div
                   slot="label"
-                  color="#000c7a"
-                  class="text-truncate d-inline-block text-capitalize"
+                  class="text-truncate d-inline-block text-capitalize theme-color"
                   :style="
                     isMobile
-                      ? 'max-width: 140px !important'
-                      : 'max-width: 400px !important'
+                      ? getUserRole === 'admin'
+                        ? 'max-width: 140px !important'
+                        : 'max-width: 200px !important'
+                      : getUserRole === 'admin'
+                      ? 'max-width: 400px !important'
+                      : 'max-width: 450px !important'
                   "
                 >
                   {{ item.name }}
@@ -105,11 +117,13 @@
                 outlined
                 dense
                 class="ml-6"
+                color="yellow darken-2"
                 @keydown.enter="changeSubTaskName(item, item.finished)"
                 ><div v-if="!isMobile" slot="append" class="d-flex">
                   <div
                     slot="append"
-                    style="font-size: 13px; margin-top: 3px; color: #2196f3"
+                    style="font-size: 13px; margin-top: 3px"
+                    class="theme-color"
                   >
                     enter
                   </div>
@@ -117,33 +131,45 @@
                     slot="append"
                     style="margin-top: 4px"
                     x-small
-                    color="blue"
+                    class="theme-color"
                     >mdi-keyboard-return</v-icon
                   >
                 </div>
               </v-text-field>
-              <v-btn v-if="item.id === editItem" text small fab
-                ><v-icon color="#00109b" dense @click="editItem = null"
+              <v-btn
+                v-if="item.id === editItem && getUserRole === 'admin'"
+                text
+                small
+                fab
+                ><v-icon class="theme-color" dense @click="editItem = null"
                   >mdi-close-circle-outline</v-icon
                 ></v-btn
               >
               <v-spacer></v-spacer>
-              <v-btn v-if="item.id === editItem" text small fab
+              <v-btn
+                v-if="item.id === editItem && getUserRole === 'admin'"
+                text
+                small
+                fab
                 ><v-icon
-                  color="#00109b"
+                  class="theme-color"
                   dense
                   @click="changeSubTaskName(item, item.finished)"
                   >mdi-check</v-icon
                 ></v-btn
               >
-              <v-btn v-if="item.id !== editItem" text small fab
-                ><v-icon color="#00109b" dense @click="editSubTask(item)"
+              <v-btn
+                v-if="item.id !== editItem && getUserRole === 'admin'"
+                text
+                small
+                fab
+                ><v-icon class="theme-color" dense @click="editSubTask(item)"
                   >mdi-pencil</v-icon
                 ></v-btn
               >
-              <v-btn text small fab
+              <v-btn v-if="getUserRole === 'admin'" text small fab
                 ><v-icon
-                  color="#00109b"
+                  class="theme-color"
                   dense
                   @click="
                     deleteId = item.id
@@ -174,7 +200,7 @@
               class="d-flex justify-center align-center w-100"
               style="min-height: 400px"
             >
-              <h2 style="color: #000c7a">No Sub Tasks Found.</h2>
+              <h2 class="theme-color">No Sub Tasks Found.</h2>
             </div>
           </div>
         </v-card-text>
@@ -228,7 +254,12 @@ export default {
     }
   },
   computed: {
-    ...mapGetters(['getSubTasks', 'getSelectedCompany', 'getSubTasksLastPage']),
+    ...mapGetters([
+      'getSubTasks',
+      'getSelectedCompany',
+      'getSubTasksLastPage',
+      'getUserRole',
+    ]),
     isMobile() {
       return this.$breakpoints.sm || this.$breakpoints.sSm
     },
@@ -259,7 +290,7 @@ export default {
             phase_id: this.$route.params.phaseId,
             task_id: this.taskId,
           })
-          if (res.status === 204 || res.status === 200) {
+          if (res.status === 204 || res.status === 200 || res.status === 201) {
             this.showSnackbar(true, 'Subtask created successfully!', false)
           }
         })
@@ -399,6 +430,5 @@ export default {
 <style scoped>
 .btn-width {
   width: 130px;
-  color: #00109b;
 }
 </style>

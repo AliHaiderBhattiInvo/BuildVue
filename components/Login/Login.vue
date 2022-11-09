@@ -28,11 +28,9 @@
     <!-- card -->
     <v-card :width="isMobile ? '350px' : '700px'">
       <div class="logo py-4 d-flex justify-center">
-        <v-icon x-large color="#000c7a"> mdi-domain </v-icon>
+        <v-icon x-large class="theme-color"> mdi-domain </v-icon>
         <v-card-title class="text-h3">
-          Build<span
-            class="rounded-lg px-2"
-            style="background-color: #000c7a; color: white"
+          Build<span class="rounded-lg px-2 theme-bg-color" style="color: white"
             >Vue</span
           >
         </v-card-title>
@@ -53,11 +51,7 @@
         </div>
         <!--card Heading -->
         <v-card-title>
-          <p
-            id="login-card-heading"
-            class="font-weight-bold"
-            style="color: #000c7a"
-          >
+          <p id="login-card-heading" class="font-weight-bold theme-color">
             Login
           </p>
           <!-- <p>to get started with Task Timer</p> -->
@@ -73,7 +67,7 @@
           <label for="Email">Email Address *</label>
           <v-text-field
             v-model="username"
-            color="purple darken-2"
+            color="yellow darken-2"
             outlined
             :rules="emailValidation"
             @focus="focus"
@@ -82,7 +76,7 @@
           <label for="Password">Password *</label>
           <v-text-field
             v-model="password"
-            color="purple darken-2"
+            color="yellow darken-2"
             outlined
             :rules="passwordValidation"
             :append-icon="visible ? 'mdi-eye' : 'mdi-eye-off'"
@@ -93,8 +87,7 @@
             @focus="focus"
           ></v-text-field>
           <!-- CheckBox Field -->
-          <v-row align="center" class="mx-1">
-            <!-- Forgot Password Page Redirect Text -->
+          <!-- <v-row align="center" class="mx-1">
             <v-spacer></v-spacer>
             <router-link
               id="forget-password-link"
@@ -102,12 +95,12 @@
               class="text-decoration-none subtitle success-text"
               >Forgot Password?</router-link
             >
-          </v-row>
+          </v-row> -->
           <!-- Login button -->
           <v-btn
             :disabled="!valid"
             width="60%"
-            class="btn-success white--text mx-auto text-capitalize mt-5 white--text align-center d-flex"
+            class="theme-bg-color white--text mx-auto text-capitalize mt-5 white--text align-center d-flex"
             @click="login"
           >
             Login
@@ -119,7 +112,7 @@
           </v-btn>
 
           <!--SignUp Page Redirect Text -->
-          <p class="mt-1 subtitle ml-1 justify-center align-center d-flex">
+          <!-- <p class="mt-1 subtitle ml-1 justify-center align-center d-flex">
             Don't have an account?
             <router-link
               id="signup-link"
@@ -127,7 +120,7 @@
               class="text-decoration-none success-text ml-2"
               >Sign Up</router-link
             >
-          </p>
+          </p> -->
         </v-form>
       </v-card-text>
     </v-card>
@@ -198,8 +191,5 @@ export default {
 <style>
 .logo {
   opacity: 0.9;
-}
-.btn-success {
-  background-color: #000c7a !important;
 }
 </style>

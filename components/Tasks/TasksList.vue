@@ -14,13 +14,13 @@
       >
         <div class="d-flex">
           <v-card-title
-            class="d-inline-block text-truncate pointer text-capitalize"
-            style="color: #000c7a"
+            class="d-inline-block text-truncate pointer text-capitalize theme-color"
           >
             {{ task.name }}
           </v-card-title>
           <v-spacer></v-spacer>
           <v-menu
+            v-if="getUserRole === 'admin'"
             ref="menu"
             :close-on-content-click="false"
             transition="scale-transition"
@@ -30,7 +30,7 @@
             <template v-slot:activator="{ on, attrs }">
               <div v-on="on" v-bind="attrs">
                 <v-btn class="mt-3" text small fab>
-                  <v-icon dense color="#000c7a"
+                  <v-icon dense class="theme-color"
                     >mdi-dots-vertical</v-icon
                   ></v-btn
                 >
@@ -38,15 +38,13 @@
             </template>
             <v-list color="white">
               <v-list-item
-                class="pointer"
-                style="color: #000c7a"
+                class="pointer theme-color"
                 @click.stop="editTask(task)"
                 >Edit Task</v-list-item
               >
               <hr />
               <v-list-item
-                class="pointer"
-                style="color: #000c7a"
+                class="pointer theme-color"
                 @click.stop="
                   deleteId = task.id
                   dialog = true
@@ -57,30 +55,31 @@
           </v-menu>
         </div>
         <div class="d-flex mr-6">
-          <v-card-text style="font-size: 18px; color: #000c7a">
+          <v-card-text class="theme-color" style="font-size: 18px">
             Start Date:
           </v-card-text>
           <v-text-field
             :value="task.start_date.slice(0, 10)"
             prepend-icon="mdi-calendar"
             readonly
-            color="#2a206a"
+            color="yellow darken-2"
           >
-            <v-icon slot="prepend" color="#000c7a">
+            <v-icon slot="prepend" class="theme-color">
               mdi-calendar</v-icon
             ></v-text-field
           >
         </div>
         <div class="d-flex mr-6">
-          <v-card-text style="font-size: 18px; color: #000c7a">
+          <v-card-text style="font-size: 18px" class="theme-color">
             End Date:
           </v-card-text>
           <v-text-field
             :value="task.end_date.slice(0, 10)"
             prepend-icon="mdi-calendar"
             readonly
+            color="yellow darken-2"
           >
-            <v-icon slot="prepend" color="#000c7a">
+            <v-icon slot="prepend" class="theme-color">
               mdi-calendar</v-icon
             ></v-text-field
           >
@@ -123,7 +122,7 @@
       class="d-flex justify-center align-center w-100"
       style="height: 100vh"
     >
-      <h2 style="color: #000c7a">No Tasks Found.</h2>
+      <h2 class="theme-color">No Tasks Found.</h2>
     </div>
     <v-dialog v-model="dialog" persistent max-width="290">
       <v-card>
@@ -196,7 +195,12 @@ export default {
     }
   },
   computed: {
-    ...mapGetters(['getTasks', 'getTasksLastPage', 'getSelectedCompany']),
+    ...mapGetters([
+      'getTasks',
+      'getTasksLastPage',
+      'getSelectedCompany',
+      'getUserRole',
+    ]),
   },
   methods: {
     ...mapMutations(['setEmptyTasks']),

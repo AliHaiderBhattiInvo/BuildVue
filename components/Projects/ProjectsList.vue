@@ -5,19 +5,19 @@
         v-for="(project, index) in getProjects"
         @click="openProject(project)"
         :key="index"
-        max-width="344"
+        max-width="350"
         min-height="400"
         class="mx-2 my-2"
       >
         <div class="d-flex">
           <v-card-title
-            class="d-inline-block text-truncate pointer text-capitalize"
-            style="color: #000c7a"
+            class="d-inline-block text-truncate pointer text-capitalize theme-color"
           >
             {{ project.name }}
           </v-card-title>
           <v-spacer></v-spacer>
           <v-menu
+            v-if="getUserRole === 'admin'"
             ref="menu"
             :close-on-content-click="false"
             transition="scale-transition"
@@ -27,7 +27,7 @@
             <template v-slot:activator="{ on }">
               <div v-on="on">
                 <v-btn class="mt-3" text small fab>
-                  <v-icon v-on="on" dense color="#000c7a"
+                  <v-icon v-on="on" dense class="theme-color"
                     >mdi-dots-vertical</v-icon
                   ></v-btn
                 >
@@ -36,15 +36,13 @@
             <!-- date picker -->
             <v-list color="white">
               <v-list-item
-                class="pointer"
-                style="color: #000c7a"
+                class="pointer theme-color"
                 @click.stop="editProject(project)"
                 >Edit Project</v-list-item
               >
               <hr />
               <v-list-item
-                class="pointer"
-                style="color: #000c7a"
+                class="pointer theme-color"
                 @click.stop="
                   deleteId = project.id
                   dialog = true
@@ -54,46 +52,35 @@
             </v-list>
           </v-menu>
         </div>
-
-        <v-img
+        <div v-if="project.image">
+          <v-img
+            :src="
+              project.image.includes('https://')
+                ? project.image
+                : baseUrl.slice(0, -8) + project.image
+            "
+            class="box-fit"
+            contain
+          />
+        </div>
+        <!-- <v-img
           v-if="project.image"
           :src="
             project.image.includes('https://')
               ? project.image
               : baseUrl.slice(0, -8) + project.image
           "
-          height="250"
+          class="box-fit"
+          height="350px"
           width="350px"
-        ></v-img>
-        <div
-          v-else
-          class="d-flex justify-center align-center"
-          style="height: 250px; width: 350px"
-        >
-          <h4>No image found</h4>
+        ></v-img> -->
+        <div v-else>
+          <img
+            src="@/assets/images/buildvue_logo_500x500_notag.png"
+            class="box-fit"
+            contain
+          />
         </div>
-
-        <!-- <v-card-subtitle> {{ project.subtitle }} </v-card-subtitle> -->
-
-        <v-card-actions>
-          <v-btn color="orange lighten-2" text> Explore </v-btn>
-
-          <v-spacer></v-spacer>
-
-          <v-btn icon @click="show = !show">
-            <v-icon>{{ show ? 'mdi-chevron-up' : 'mdi-chevron-down' }}</v-icon>
-          </v-btn>
-        </v-card-actions>
-
-        <v-expand-transition>
-          <div v-show="show">
-            <v-divider></v-divider>
-
-            <v-card-text>
-              <!-- {{ project.description }} -->
-            </v-card-text>
-          </div>
-        </v-expand-transition>
       </v-card>
     </div>
     <v-card
@@ -117,7 +104,7 @@
       class="d-flex justify-center align-center w-100"
       style="height: 100vh"
     >
-      <h2 style="color: #000c7a">No Projects Found.</h2>
+      <h2 class="theme-color">No Projects Found.</h2>
     </div>
     <v-dialog v-model="dialog" persistent max-width="290">
       <v-card>
@@ -179,10 +166,17 @@ export default {
       dialog: false,
       deleteId: null,
       loader: false,
+      defaultImage:
+        "require('../../assets/images/buildvue_logo_500x500_notag.png')",
     }
   },
   computed: {
-    ...mapGetters(['getProjects', 'getLastPage', 'getSelectedCompany']),
+    ...mapGetters([
+      'getProjects',
+      'getLastPage',
+      'getSelectedCompany',
+      'getUserRole',
+    ]),
   },
   methods: {
     ...mapActions(['fetchProjects', 'deleteProject', 'logout']),
@@ -248,5 +242,10 @@ export default {
 }
 .pointer {
   cursor: pointer;
+}
+.box-fit {
+  object-fit: contain !important;
+  width: 350px;
+  height: 300px;
 }
 </style>

@@ -3,8 +3,8 @@
     <v-dialog v-model="projectDialogFlag" width="500"
       ><v-card min-height="380">
         <v-card-title
-          class="px-1 text-truncate dialog-title-border"
-          style="background-color: #000c7a; color: white"
+          class="px-1 text-truncate dialog-title-border theme-bg-color"
+          style="color: white"
         >
           <div class="d-flex justify-center float-left" style="width: 90%">
             <span class="d-inline-block text-truncate" style="max-width: 300px">
@@ -34,7 +34,7 @@
         <div style="max-width: 455px" class="mx-6">
           <v-text-field
             v-model="projectTitle"
-            color="purple darken-2"
+            color="yellow darken-2"
             outlined
             autofocus
           ></v-text-field>
@@ -43,8 +43,13 @@
           <label for="image">Upload Image *</label>
         </div>
         <div class="d-flex ml-6 mr-2 align-center">
-          <input type="file" id="file" ref="file" v-on:change="preview" />
-
+          <input
+            type="file"
+            id="file"
+            ref="file"
+            accept="image/*"
+            v-on:change="preview"
+          />
           <v-img style="border-radius: 50%" :src="imgSrc" width="45px"></v-img>
         </div>
         <div class="d-flex">
@@ -67,8 +72,7 @@
           <v-spacer></v-spacer>
           <v-btn
             @click="onSubmit()"
-            class="ma-4 btn"
-            color="#000c7a"
+            class="ma-4 btn theme-color"
             style="width: 100px"
             >Save
             <v-progress-circular
@@ -103,6 +107,8 @@ export default {
       imgSrc: this.imagePath,
       projectID: this.projectId,
       loader: false,
+      defaultImage:
+        "require('../../assets/images/buildvue_logo_500x500_notag.png')",
     }
   },
   computed: {
@@ -112,10 +118,10 @@ export default {
     ...mapActions(['createProject', 'updateProject', 'logout']),
     onSubmit() {
       const formData = new FormData()
-      formData.append('image', this.file)
       formData.append('name', this.projectTitle)
       if (this.titleFlag === 'Create Project') {
-        if (formData.get('image') && formData.get('name')) {
+        if (this.file) formData.append('image', this.file)
+        if (formData.get('name')) {
           this.loader = true
           this.createProject(formData)
             .then((res) => {
@@ -142,11 +148,12 @@ export default {
                 this.showSnackbar(true, err.data.data.message, true)
             })
         } else {
-          this.showSnackbar(true, 'Please select / enter all values!', true)
+          this.showSnackbar(true, 'Please enter name!', true)
         }
       } else if (this.titleFlag === 'Update Project') {
         formData.append('_method', 'PUT')
-        if (formData.get('image') && formData.get('name')) {
+        if (this.file) formData.append('image', this.file)
+        if (formData.get('name')) {
           this.loader = true
           this.updateProject({
             formData,
@@ -173,8 +180,7 @@ export default {
                 }, 1000)
               }
             })
-        } else
-          this.showSnackbar(true, 'Please select / enter all values!', true)
+        } else this.showSnackbar(true, 'Please enter name!', true)
       }
     },
     preview(e) {
