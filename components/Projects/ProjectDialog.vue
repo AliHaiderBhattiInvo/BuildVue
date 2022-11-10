@@ -50,7 +50,20 @@
             accept="image/*"
             v-on:change="preview"
           />
-          <v-img style="border-radius: 50%" :src="imgSrc" width="45px"></v-img>
+          <v-img
+            v-if="imgSrc"
+            style="border-radius: 50%"
+            :src="imgSrc"
+            width="45px"
+          ></v-img>
+          <div v-if="!imgSrc && titleFlag !== 'Create Project'">
+            <img
+              src="@/assets/images/buildvue_logo_500x500_notag.png"
+              contain
+              style="border-radius: 50%"
+              width="150px"
+            />
+          </div>
         </div>
         <div class="d-flex">
           <div></div>
@@ -146,6 +159,9 @@ export default {
               }
               if (err.status === 400)
                 this.showSnackbar(true, err.data.data.message, true)
+              if (err.status === 422) {
+                this.showSnackbar(true, err.data.data.message, true)
+              }
             })
         } else {
           this.showSnackbar(true, 'Please enter name!', true)
@@ -179,14 +195,25 @@ export default {
                   this.logout()
                 }, 1000)
               }
+              if (err.status === 422) {
+                this.showSnackbar(true, err.data.data.message, true)
+              }
             })
         } else this.showSnackbar(true, 'Please enter name!', true)
       }
     },
     preview(e) {
-      this.file = this.$refs.file.files[0]
-      const imgSrc = window.URL.createObjectURL(e.target.files[0])
-      this.imgSrc = imgSrc
+      if (this.$refs.file.files[0].size > 5000000) {
+        this.showSnackbar(
+          true,
+          'Image size should not be greater than 5 MB',
+          true
+        )
+      } else {
+        this.file = this.$refs.file.files[0]
+        const imgSrc = window.URL.createObjectURL(e.target.files[0])
+        this.imgSrc = imgSrc
+      }
     },
   },
   watch: {
