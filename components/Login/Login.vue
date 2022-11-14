@@ -130,9 +130,11 @@
 <script>
 import { mapActions } from 'vuex'
 import { emailRules, passwordRules } from '../../validations/validations'
+import snackbarMixin from '../../mixins/snackbar'
 export default {
   name: 'LoginPage',
   middleware: 'auth',
+  mixins: [snackbarMixin],
   data() {
     return {
       username: null,
@@ -166,20 +168,25 @@ export default {
         grant_type: 'password',
       }
       this.loader = true
-      this.loginUser(loginCreds)
-        .then((res) => {
-          this.loader = false
-          if (!res.companies?.length) {
-            this.$auth.logout()
-            localStorage.removeItem('setSelectedCompany')
-          }
-        })
-        .catch((err) => {
-          this.loader = false
-          this.snackbar = true
-          this.updateTaskError = true
-          this.snackbarMessage = err.response.data.message
-        })
+      if (this.username && this.password) {
+        this.loginUser(loginCreds)
+          .then((res) => {
+            this.loader = false
+            if (!res.companies?.length) {
+              this.$auth.logout()
+              localStorage.removeItem('setSelectedCompany')
+            }
+          })
+          .catch((err) => {
+            this.loader = false
+            if (err.response.status)
+              this.showSnackbar(
+                true,
+                'Please enter the valid credentials!',
+                true
+              )
+          })
+      } else this.showSnackbar(true, 'Please enter all the credentials!', true)
     },
     focus() {
       this.validate = ''
