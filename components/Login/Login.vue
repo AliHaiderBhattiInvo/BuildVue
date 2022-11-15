@@ -158,7 +158,7 @@ export default {
     },
   },
   methods: {
-    ...mapActions(['loginUser']),
+    ...mapActions(['loginUser', 'logout']),
     login() {
       const loginCreds = {
         client_id: 2,
@@ -167,14 +167,19 @@ export default {
         password: this.password,
         grant_type: 'password',
       }
-      this.loader = true
       if (this.username && this.password) {
+        this.loader = true
         this.loginUser(loginCreds)
           .then((res) => {
             this.loader = false
             if (!res.companies?.length) {
-              this.$auth.logout()
+              this.logout()
               localStorage.removeItem('setSelectedCompany')
+              this.showSnackbar(
+                true,
+                'You do not belong to any company. Please contact the administrator',
+                true
+              )
             }
           })
           .catch((err) => {

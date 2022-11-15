@@ -233,7 +233,7 @@ export default {
   },
   mounted() {
     this.setEmptyProjects([])
-    this.fetchProjects(this.currentPage)
+    if (this.getSelectedCompany?.id) this.fetchProjects(this.currentPage)
   },
   created() {
     if (!this.getSelectedCompany?.id) this.logout()
