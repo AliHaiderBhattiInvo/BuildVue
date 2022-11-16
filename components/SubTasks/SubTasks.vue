@@ -65,7 +65,12 @@
               @click="addSubTask()"
               >Add Sub Task</v-btn
             >
-            <v-btn v-if="isMobile" class="ml-1 mt-1" small height="35px"
+            <v-btn
+              v-if="isMobile"
+              class="ml-1 mt-1"
+              small
+              height="35px"
+              @click="addSubTask()"
               ><v-icon class="theme-color" dense>mdi-plus</v-icon></v-btn
             >
           </div>
