@@ -1,6 +1,9 @@
 # BuildVue
 
+npm run dev
+
 ## Important
+
 ```bash
 # node
 16.15.0
@@ -11,7 +14,6 @@
 # vuetify
 2.6.10
 ```
-
 
 ## Build Setup
 
